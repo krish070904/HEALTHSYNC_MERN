@@ -1,0 +1,190 @@
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
+import { formatReportData } from "../utils/reportFormatter.js";
+import nodemailer from "nodemailer"; 
+
+
+const fileExists = (p) => {
+  try { return fs.existsSync(p); } 
+  catch { return false; }
+};
+
+
+const header = (doc, formatted, pageWidth) => {  };
+const footer = (doc) => { };
+
+const renderSummary = (doc, formatted, days) => {
+  doc.fontSize(12).text(`Summary (Last ${days} days)`, { underline: true });
+  doc.text(`Avg Severity: ${formatted.summary.avgSeverity30}`);
+  doc.text(`Max Severity: ${formatted.summary.maxSeverity} (${formatted.summary.maxSeverityLabel})`);
+  doc.text(`Total Submissions: ${formatted.summary.totalEntries}`);
+  doc.text(`Alerts Triggered: ${formatted.summary.alertCount}`);
+  doc.moveDown();
+};
+
+const renderEntriesTable = (doc, formatted) => {
+  doc.fontSize(12).text("Symptom History", { underline: true });
+  formatted.entries.forEach(e => {
+    doc.fontSize(10).text(`${e.date} — Severity: ${e.severity} (${e.severityLabel})`);
+    doc.text(e.description);
+    if (e.modelResult && Object.keys(e.modelResult).length) {
+      doc.text(`AI: ${JSON.stringify(e.modelResult)}`);
+    }
+    doc.moveDown();
+  });
+};
+
+const renderAlerts = (doc, formatted) => {
+  if (!formatted.alerts || !formatted.alerts.length) return;
+  doc.addPage();
+  doc.fontSize(12).text("Alert Log", { underline: true });
+  formatted.alerts.forEach(a => {
+    doc.fontSize(10).text(`${a.date} — Severity: ${a.severity} (${a.severityLabel})`);
+    doc.fontSize(9).text(a.description);
+    doc.moveDown();
+  });
+};
+
+// ----------------- Generate PDF -----------------
+export const generateReportPDF = async (req, res, disposition = "attachment") => {
+  try {
+    const userId = req.user._id;
+    const days = Number(req.query.range) || 30;
+
+    const User = (await import("../models/User.js")).default;
+    const SymptomEntry = (await import("../models/SymptomEntry.js")).default;
+
+    const user = await User.findById(userId).select("-password");
+    const since = new Date(Date.now() - days * 24*60*60*1000);
+
+    const entriesRaw = await SymptomEntry.find({ userId, createdAt: { $gte: since }}).sort({ createdAt: -1 });
+    const alertsRaw = await SymptomEntry.find({ userId, alertFlag: true }).sort({ createdAt: -1 });
+
+    const raw = {
+      user,
+      summary: {
+        totalEntries: entriesRaw.length,
+        alertCount: alertsRaw.length,
+        maxSeverity: entriesRaw.length ? Math.max(...entriesRaw.map(e=>e.severityScore||0)) : 0,
+        avgSeverity30: entriesRaw.length ? +(entriesRaw.map(e=>e.severityScore||0).reduce((a,b)=>a+b,0)/entriesRaw.length).toFixed(2) : 0
+      },
+      entries: entriesRaw.map(e => ({
+        date: e.createdAt,
+        description: e.textDescription,
+        severity: e.severityScore,
+        modelResult: e.modelResult,
+        images: e.images || []
+      })),
+      alerts: alertsRaw
+    };
+
+    const formatted = formatReportData(raw);
+
+    const filename = `health-report-${userId}-${Date.now()}.pdf`;
+    res.setHeader("Content-Disposition", `${disposition}; filename="${filename}"`);
+    res.setHeader("Content-Type", "application/pdf");
+
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+    doc.pipe(res);
+
+    const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    header(doc, formatted, pageWidth);
+    // render sections
+    renderSummary(doc, formatted, days);
+    renderEntriesTable(doc, formatted);
+    renderAlerts(doc, formatted);
+    footer(doc);
+
+    doc.end();
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error generating PDF" });
+  }
+};
+
+// ----------------- Email PDF -----------------
+export const sendReportByEmail = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const chunks = [];
+    
+    // create PDF in memory
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+    doc.on("data", (chunk) => chunks.push(chunk));
+    doc.on("end", async () => {
+      const pdfBuffer = Buffer.concat(chunks);
+
+      // send email
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: process.env.SMTP_SECURE === "true",
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"Healthsync" <${process.env.SMTP_USER}>`,
+        to: userEmail,
+        subject: "Your Healthsync Report",
+        text: "Please find your health report attached.",
+        attachments: [
+          { filename: `health-report.pdf`, content: pdfBuffer }
+        ],
+      });
+
+      res.json({ message: "Report emailed successfully!" });
+    });
+
+    // generate PDF content in memory (reuse same rendering logic)
+    const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    const days = Number(req.body.range) || 30;
+    const formatted = await getFormattedUserData(req.user._id, days); // helper to fetch & format data
+
+    header(doc, formatted, pageWidth);
+    renderSummary(doc, formatted, days);
+    renderEntriesTable(doc, formatted);
+    renderAlerts(doc, formatted);
+    footer(doc);
+
+    doc.end();
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error sending report via email" });
+  }
+};
+
+// ----------------- Helper to fetch & format user data -----------------
+const getFormattedUserData = async (userId, days) => {
+  const User = (await import("../models/User.js")).default;
+  const SymptomEntry = (await import("../models/SymptomEntry.js")).default;
+  const user = await User.findById(userId).select("-password");
+  const since = new Date(Date.now() - days*24*60*60*1000);
+  const entriesRaw = await SymptomEntry.find({ userId, createdAt: { $gte: since }}).sort({ createdAt:-1 });
+  const alertsRaw = await SymptomEntry.find({ userId, alertFlag: true }).sort({ createdAt:-1 });
+
+  const raw = {
+    user,
+    summary: {
+      totalEntries: entriesRaw.length,
+      alertCount: alertsRaw.length,
+      maxSeverity: entriesRaw.length ? Math.max(...entriesRaw.map(e=>e.severityScore||0)) : 0,
+      avgSeverity30: entriesRaw.length ? +(entriesRaw.map(e=>e.severityScore||0).reduce((a,b)=>a+b,0)/entriesRaw.length).toFixed(2) : 0
+    },
+    entries: entriesRaw.map(e => ({
+      date: e.createdAt,
+      description: e.textDescription,
+      severity: e.severityScore,
+      modelResult: e.modelResult,
+      images: e.images || []
+    })),
+    alerts: alertsRaw
+  };
+
+  return formatReportData(raw);
+};

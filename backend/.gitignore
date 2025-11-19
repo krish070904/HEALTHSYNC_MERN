@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Environment files
+*.env
+
+# Firebase secret JSON
+backend/src/config/healthsync-*.json
+
+# Build outputs / logs
+dist/
+*.log
