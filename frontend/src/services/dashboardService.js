@@ -1,6 +1,22 @@
 import api from "./api";
 
-export const fetchDashboard = async () => {
-  const res = await api.get("/dashboard");
-  return res.data;
+export const getDashboardData = async () => {
+  try {
+    const res = await api.get("/dashboard");
+
+    return {
+      symptomEntries: res.data.recentSymptoms,
+      alerts: res.data.alerts,
+      medSchedule: res.data.medicationSchedule,
+      dietPlan: res.data.dietPlan,
+      summary: {
+        severityMetrics: res.data.severityMetrics,
+        weeklySeverity: res.data.weeklySeverity,
+        alertCount: res.data.alertCount,
+        bmi: res.data.bmi,
+      },
+    };
+  } catch (err) {
+    throw err.response?.data || { message: "Error fetching dashboard data" };
+  }
 };

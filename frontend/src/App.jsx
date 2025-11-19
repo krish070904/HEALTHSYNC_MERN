@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SymptomEntryPage from "./pages/SymptomEntryPage";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/symptom-entry" element={<SymptomEntryPage />} />
+
       </Routes>
     </Router>
   );
