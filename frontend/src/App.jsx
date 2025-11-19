@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SymptomEntryPage from "./pages/SymptomEntryPage";
+import DailyMonitoringPage from "./pages/DailyMonitoringPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           }
         />
         <Route path="/symptom-entry" element={<SymptomEntryPage />} />
+        <Route path="/daily-monitoring" element={<DailyMonitoringPage />} />
 
       </Routes>
     </Router>
