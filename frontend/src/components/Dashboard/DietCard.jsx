@@ -1,35 +1,24 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
+import fork from "../../assets/DashboardAssets/cutlery.png"
 const DietCard = ({ diet }) => {
   const meals = diet?.meals || [];
-  const navigate = useNavigate();
-
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-      <h2 className="text-lg font-semibold mb-2">Today's Meals</h2>
-
-      {meals.length > 0 ? (
-        <ul className="space-y-1 max-h-40 overflow-y-auto">
-          {meals.map((meal, idx) => (
-            <li key={idx} className="p-2 border-b border-gray-200 truncate">
-              <span className="font-medium">{meal.time}:</span> {meal.name}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-gray-500">No meals scheduled for today.</p>
-      )}
-
-      <button
-        onClick={() => navigate("/diet")}
-        className="mt-3 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-      >
-        View Weekly Plan
-      </button>
+    <div className="w-full lg:col-span-1 xl:col-span-1 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
+      <div className="p-6 border-b border-border-light flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+          <img src={fork} alt="Pill" className="w-5 h-5" />
+        </div>
+        <h2 className="text-xl font-bold text-text-light dark:text-text-dark">Today's Diet</h2>
+      </div>
+      <div className="p-6 space-y-4">
+        {meals.length === 0 ? <p>No meals scheduled</p> : meals.map((meal, idx) => (
+          <div key={idx}>
+            <p className="font-semibold text-text-light dark:text-text-dark">{meal.time}</p>
+            <p className="text-sm text-subtle-light dark:text-subtle-dark">{meal.name}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
 
 export default DietCard;

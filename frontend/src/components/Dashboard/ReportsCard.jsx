@@ -1,28 +1,22 @@
-import React, { useState } from "react";
-import axios from "../../services/api";
-
+import { useState } from "react";
+import api from "../../services/api";
+import reoprt from "../../assets/DashboardAssets/report-card.png"
 const ReportsCard = () => {
   const [loading, setLoading] = useState(false);
 
   const downloadReport = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/report/pdf/latest", {
-        responseType: "blob", // important for files
-      });
-
-      // Create a URL for the blob
+      const response = await api.get("/report/pdf/download", { responseType: "blob" });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-
-      // Filename
       link.setAttribute("download", "HealthReport.pdf");
       document.body.appendChild(link);
       link.click();
       link.remove();
     } catch (err) {
-      console.error("Error downloading report:", err);
+      console.error(err);
       alert("Failed to download report.");
     } finally {
       setLoading(false);
@@ -30,15 +24,22 @@ const ReportsCard = () => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-      <h2 className="text-lg font-semibold mb-4">Reports</h2>
-      <button
-        onClick={downloadReport}
-        disabled={loading}
-        className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 disabled:opacity-50"
-      >
-        {loading ? "Downloading..." : "Download Latest Report"}
-      </button>
+    <div className="w-full lg:col-span-1 xl:col-span-1 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
+      <div className="p-6 border-b border-border-light flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+          <img src={reoprt} alt="Pill" className="w-5 h-5" />
+        </div>
+        <h2 className="text-xl font-bold text-text-light dark:text-text-dark">Reports</h2>
+      </div>
+      <div className="p-6">
+        <button
+          onClick={downloadReport}
+          disabled={loading}
+          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 disabled:opacity-50"
+        >
+          {loading ? "Downloading..." : "Download Latest Report"}
+        </button>
+      </div>
     </div>
   );
 };

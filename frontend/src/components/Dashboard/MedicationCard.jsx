@@ -1,70 +1,49 @@
-import React, { useState } from "react";
-import axios from "../../services/api";
+import React from "react";
+import PillIcon from "../../assets/DashboardAssets/pill_8064036.png"; // adjust path if needed
 
-const MedicationCard = ({ meds = [], refresh }) => {
-  if (!meds.length) return <p>No medications scheduled</p>;
-  const [updating, setUpdating] = useState(false);
-
-  const markAdherence = async (medId, status) => {
-    try {
-      setUpdating(true);
-      const today = new Date().toISOString().slice(0, 10);
-      await axios.put(`/medications/${medId}/adherence`, {
-        date: today,
-        status,
-      });
-      refresh?.(); // optional chaining in case refresh is not provided
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  // Early return if no medications
-  if (!meds || meds.length === 0) {
-    return (
-      <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-        <h2 className="text-lg font-semibold mb-2">Today's Medications</h2>
-        <p>No medications scheduled for today.</p>
-      </div>
-    );
-  }
+const MedicationCard = ({ meds }) => {
+  const safeMeds = Array.isArray(meds) ? meds : [];
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-      <h2 className="text-lg font-semibold mb-2">Today's Medications</h2>
-      <ul className="space-y-2 max-h-64 overflow-y-auto">
-        {meds.map((med) => (
-          <li
-            key={med._id}
-            className="flex justify-between items-center p-2 border-b border-gray-200"
-          >
-            <div>
-              <p className="font-medium">{med.medName}</p>
-              <p className="text-sm text-gray-600">
-                {med.dosage} at {med.times?.join(", ")}
-              </p>
+    <div className="w-full lg:col-span-1 xl:col-span-2 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
+      {/* Header */}
+      <div className="p-6 border-b border-border-light flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+          <img src={PillIcon} alt="Pill Icon" className="w-6 h-6" />
+        </div>
+        <h2 className="text-xl font-bold text-text-light dark:text-text-dark">
+          Medication Schedule
+        </h2>
+      </div>
+
+      {/* Body */}
+      <div className="p-6 space-y-4">
+        {safeMeds.length === 0 ? (
+          <p>No medications scheduled</p>
+        ) : (
+          safeMeds.map((med) => (
+            <div
+              key={med._id}
+              className="flex justify-between items-center p-3 rounded-lg border border-primary-darker bg-primary/10"
+            >
+              <div className="flex items-center space-x-3">
+                <img src={PillIcon} alt="Pill" className="w-5 h-5" />
+                <div>
+                  <p className="font-medium text-text-light dark:text-text-dark">
+                    {med.medName}
+                  </p>
+                  <p className="text-sm text-subtle-light dark:text-subtle-dark">
+                    {med.dosage}
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                {med.status || "Upcoming"}
+              </span>
             </div>
-            <div className="flex gap-2">
-              <button
-                disabled={updating}
-                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                onClick={() => markAdherence(med._id, "taken")}
-              >
-                Taken
-              </button>
-              <button
-                disabled={updating}
-                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                onClick={() => markAdherence(med._id, "skipped")}
-              >
-                Skipped
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+          ))
+        )}
+      </div>
     </div>
   );
 };

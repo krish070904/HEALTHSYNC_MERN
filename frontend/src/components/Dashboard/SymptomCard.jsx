@@ -1,65 +1,66 @@
-import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { useEffect, useRef } from "react";
+import Chart from "chart.js/auto";
+import tethoscope from "../../assets/DashboardAssets/stethoscope_6467872.png";
 
 const SymptomCard = ({ entries = [] }) => {
-  // Early return if no entries
-    if (!entries.length) {
-    return (
-      <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-        <h2 className="text-lg font-semibold mb-2">Symptom Trends</h2>
-        <p>No symptom entries yet.</p>
-      </div>
-    );
-  }
+  const chartRef = useRef(null);
 
-  // Format and sort entries by date
-  const data = entries
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    .map((e) => ({
-      date: new Date(e.createdAt).toLocaleDateString(),
-      severity: e.severityScore,
-      text: e.textDescription,
-    }));
+  useEffect(() => {
+    if (!entries.length) return;
 
-  // Function to color bars by severity
-  const getBarColor = (severity) => {
-    if (severity >= 70) return "#ff4d4f"; // high
-    if (severity >= 40) return "#faad14"; // medium
-    return "#52c41a"; // low
-  };
+    const ctx = chartRef.current.getContext("2d");
+    const labels = entries.map(e => new Date(e.createdAt).toLocaleDateString());
+    const dataPoints = entries.map(e => e.severityScore);
+
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Symptom Severity",
+            data: dataPoints,
+            fill: true,
+            borderColor: "#F5B947",
+            backgroundColor: "rgba(245, 185, 71, 0.2)",
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { stepSize: 20 },
+          },
+        },
+      },
+    });
+
+    return () => chart.destroy();
+  }, [entries]);
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-1/2 lg:w-1/3">
-      <h2 className="text-lg font-semibold mb-2">Symptom Trends</h2>
-
-      <div className="h-48">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip
-              formatter={(value) => [`Severity: ${value}`, ""]}
-              labelFormatter={(label) => `Date: ${label}`}
-            />
-            <Bar dataKey="severity">
-              {data.map((entry, index) => (
-                <Cell key={index} fill={getBarColor(entry.severity)} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+    <div className="w-full lg:col-span-2 xl:col-span-2 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
+      <div className="p-6 border-b border-border-light flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+         
+        </div>
+        <h2 className="text-xl font-bold text-text-light dark:text-text-dark">Symptom Trends</h2>
       </div>
-
-      <div className="mt-4">
-        <h3 className="font-medium mb-2">Latest Entries</h3>
+      <div className="p-6">
+        <canvas ref={chartRef}></canvas>
+      </div>
+      <div className="p-6 border-t border-border-light">
+        <h3 className="font-semibold mb-2 text-text-light dark:text-text-dark">Latest Entries</h3>
         <ul className="space-y-2 max-h-40 overflow-y-auto">
-          {data.slice(-5).reverse().map((entry, index) => (
-            <li
-              key={index}
-              className="flex justify-between border-b border-gray-200 py-1"
-            >
-              <span className="truncate">{entry.text}</span>
-              <span className="font-semibold">{entry.severity}</span>
+          {entries.slice(-5).reverse().map((e) => (
+            <li key={e._id} className="flex justify-between border-b border-gray-200 py-1">
+              <span className="truncate">{e.textDescription}</span>
+              <span className="font-semibold">{e.severityScore}</span>
             </li>
           ))}
         </ul>
