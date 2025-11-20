@@ -14,14 +14,10 @@ const AlertsCard = ({ alerts }) => {
         {alerts.map((alert) => (
           <li
             key={alert._id}
-            className={`flex justify-between items-center p-2 rounded ${getSeverityColor(
-              alert.severity
-            )} text-white cursor-pointer`}
+            className={`flex justify-between items-center p-2 rounded ${getSeverityColor(alert.severity)} text-white cursor-pointer`}
             onClick={() => alert("Show modal with full details")}
           >
-            <span className="truncate">
-              {`Severity ${alert.severityScore}: ${alert.textDescription}`}
-            </span>
+            <span className="truncate">{alert.message}</span>
             <span className="font-bold">{alert.severity}</span>
           </li>
         ))}

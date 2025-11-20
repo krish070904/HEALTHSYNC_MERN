@@ -7,7 +7,7 @@ const ReportsCard = () => {
   const downloadReport = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/report/pdf/download", {
+      const response = await axios.get("/report/pdf/latest", {
         responseType: "blob", // important for files
       });
 

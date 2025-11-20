@@ -22,7 +22,7 @@ const DietCard = ({ diet }) => {
       )}
 
       <button
-        onClick={() => navigate("/diet-recipes")}
+        onClick={() => navigate("/diet")}
         className="mt-3 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
       >
         View Weekly Plan
@@ -30,5 +30,6 @@ const DietCard = ({ diet }) => {
     </div>
   );
 };
+
 
 export default DietCard;

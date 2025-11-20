@@ -10,7 +10,7 @@ const SymptomsForm = ({ symptoms, setSymptoms }) => {
         max="5"
         value={symptoms.severity}
         onChange={(e) =>
-          setSymptoms({ ...symptoms, severity: Number(e.target.value) }) // ✅ cast to number
+          setSymptoms({ ...symptoms, severity: e.target.value })
         }
       />
 

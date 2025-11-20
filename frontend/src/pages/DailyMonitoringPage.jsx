@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";   // 👈 ADD THIS
 
-import SleepForm from "../components/SleepForm";
-import WaterForm from "../components/WaterForm";
-import MealForm from "../components/MealForm";
-import MoodForm from "../components/MoodForm";
-import VitalsForm from "../components/VitalsForm";
-import SymptomsForm from "../components/SymptomsForm";
-import SubmitCard from "../components/SubmitCard";
+import SleepForm from "../components/dailyMonitoring/SleepForm";
+import WaterForm from "../components/dailyMonitoring/WaterForm";
+import MealForm from "../components/dailyMonitoring/MealForm";
+import MoodForm from "../components/dailyMonitoring/MoodForm";
+import VitalsForm from "../components/dailyMonitoring/VitalsForm";
+import SymptomsForm from "../components/dailyMonitoring/SymptomsForm";
+import SubmitCard from "../components/dailyMonitoring/SubmitCard";
 
 const DailyMonitoringPage = () => {
   const navigate = useNavigate();   // 👈 ADD THIS

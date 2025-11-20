@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import RecipeFilters from "../components/RecipeFilters";
+import RecipeFilters from "../components/Recipe/RecipeFilters";
 import RecipeGrid from "../components/RecipeGrid";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
 import api from "../services/api"; // updated

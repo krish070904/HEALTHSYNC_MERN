@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import NotificationFilters from "../components/NotificationFilters";
-import NotificationsList from "../components/NotificationsList";
+import NotificationFilters from "../components/Notification/NotificationFilters";
+import NotificationsList from "../components/Notification/NotificationsList";
 import api from "../services/api";
 
 const NotificationsPage = () => {

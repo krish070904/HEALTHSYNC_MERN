@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import SymptomForm from "../components/SymptomForm";
-import ImagePreview from "../components/ImagePreview";
-import ResultCard from "../components/ResultCard";
+import SymptomForm from "../components/Symptom/SymptomForm";
+import ImagePreview from "../components/Symptom/ImagePreview";
+import ResultCard from "../components/Symptom/ResultCard";
 
 const SymptomEntryPage = () => {
   const [loading, setLoading] = useState(false);
