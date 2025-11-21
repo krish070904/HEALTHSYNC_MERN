@@ -31,12 +31,7 @@ const RecipeCard = ({ recipe, onClick }) => {
         </div>
       </div>
 
-      {/* Floating numbers like HTML example */}
-      <div className="absolute top-3 left-3 flex h-10 w-10 items-center justify-center rounded-full bg-green-500/20 backdrop-blur-sm">
-        <span className="font-bold text-green-700 dark:text-green-300">
-          {Math.floor(Math.random() * 100)}
-        </span>
-      </div>
+      
 
       <div className="absolute top-3 right-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/50 backdrop-blur-sm">
         <span className="material-symbols-outlined text-2xl">add</span>

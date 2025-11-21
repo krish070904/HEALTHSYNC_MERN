@@ -1,19 +1,30 @@
-import React, { useEffect, useState } from "react";
-import RecipeFilters from "../components/Recipe/RecipeFilters";
+import React, { useState, useEffect } from "react"; // ✅ must import hooks
 import RecipeGrid from "../components/Recipe/RecipeGrid";
 import RecipeDetailsModal from "../components/Recipe/RecipeDetailsModal";
+import AIBox from "../components/Recipe/AIBox"; // make sure AIBox is imported
 import api from "../services/api";
 import "../styles/MealPage.css";
 
 const DietRecipesPage = () => {
   const [recipes, setRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
-  const [filters, setFilters] = useState({ disease: "", mealType: "All", search: "" });
+  const [showAIBox, setShowAIBox] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [filters, setFilters] = useState({ search: "" }); // ✅ define filters
 
+  // Fetch meals
   const fetchRecipes = async () => {
     try {
       const res = await api.get("/diet");
+      
+      // Check if dailyMeals exists
+      if (!res.data || !res.data.dailyMeals) {
+        console.log("No diet plan found");
+        setRecipes([]);
+        setFilteredRecipes([]);
+        return;
+      }
+
       const allMeals = res.data.dailyMeals.flatMap((d) =>
         d.meals.map((m) => ({
           id: `${d.day}-${m.mealType}`,
@@ -26,7 +37,14 @@ const DietRecipesPage = () => {
       setRecipes(allMeals);
       setFilteredRecipes(allMeals);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching diet plan:", err.response?.status, err.response?.data?.message);
+      
+      // If 404, user doesn't have a diet plan yet
+      if (err.response?.status === 404) {
+        console.log("No diet plan found for user. Please generate one first.");
+        setRecipes([]);
+        setFilteredRecipes([]);
+      }
     }
   };
 
@@ -34,16 +52,14 @@ const DietRecipesPage = () => {
     fetchRecipes();
   }, []);
 
+  // Search filter
   useEffect(() => {
     let filtered = [...recipes];
-    if (filters.search)
+    if (filters.search) {
       filtered = filtered.filter((r) =>
         r.recipe.toLowerCase().includes(filters.search.toLowerCase())
       );
-    if (filters.mealType && filters.mealType !== "All")
-      filtered = filtered.filter(
-        (r) => r.mealType.toLowerCase() === filters.mealType.toLowerCase()
-      );
+    }
     setFilteredRecipes(filtered);
   }, [filters, recipes]);
 
@@ -66,32 +82,39 @@ const DietRecipesPage = () => {
               className="search-input"
               placeholder="Search for recipes, ingredients..."
               value={filters.search}
-              onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, search: e.target.value }))
+              }
             />
-            <span className="material-symbols-outlined px-4 text-gray-400 cursor-pointer">mic</span>
-            <div className="h-8 border-l border-gray-200 dark:border-gray-700 mx-2"></div>
-            <button className="flex items-center justify-center px-4 cursor-pointer">
-              <span className="material-symbols-outlined text-gray-500">tune</span>
-            </button>
           </div>
         </div>
-
-     
-       
 
         {/* Recipe Grid */}
         <RecipeGrid recipes={filteredRecipes} onSelect={setSelectedRecipe} />
 
         {/* Recipe Modal */}
         {selectedRecipe && (
-          <RecipeDetailsModal recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
+          <RecipeDetailsModal
+            recipe={selectedRecipe}
+            onClose={() => setSelectedRecipe(null)}
+          />
         )}
       </main>
 
-      {/* Floating button */}
-      <button className="fab">
+      {/* Floating AI button */}
+      <button className="fab" onClick={() => setShowAIBox(true)}>
         <span className="material-symbols-outlined text-3xl">auto_awesome</span>
       </button>
+
+      {/* AIBox */}
+      {showAIBox && (
+        <AIBox
+          onClose={() => setShowAIBox(false)}
+          setRecipes={(aiRecipes) => {
+            setFilteredRecipes((prev) => [...aiRecipes, ...prev]);
+          }}
+        />
+      )}
     </div>
   );
 };

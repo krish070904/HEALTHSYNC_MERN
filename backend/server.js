@@ -13,6 +13,7 @@ import dietRoutes from "./src/routes/dietRoutes.js";
 import alertRoutes from "./src/routes/alertRoutes.js";
 import "./src/scheduler/routineAlertScheduler.js";
 import cors from "cors";
+import aiRoutes from "./src/routes/aiRoutes.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/medications", medRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/diet", dietRoutes);
 app.use("/api/alerts", alertRoutes);
+app.use("/ai", aiRoutes);
 
 
 const PORT = process.env.PORT || 5000;

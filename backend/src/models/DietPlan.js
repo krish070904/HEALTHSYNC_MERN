@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
 const mealSchema = new mongoose.Schema({
-  mealType: { type: String, required: true }, // Breakfast / Lunch / Dinner / Snack
+  mealType: { type: String, required: true },
   recipe: { type: String, required: true },
   calories: { type: Number, default: 0 },
-  image: { type: String } // optional, URL or filename
+  image: { type: String },
+  ingredients: [{ type: String }],
+  steps: [{ type: String }],
+  youtubeLink: { type: String }
 });
 
 const dailyMealSchema = new mongoose.Schema({
