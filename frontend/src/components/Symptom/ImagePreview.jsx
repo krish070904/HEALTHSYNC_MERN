@@ -1,16 +1,21 @@
 import React from "react";
+import "../../styles/SymptomEntryPage.css"; // ✅ only import the CSS here
 
-const ImagePreview = ({ image }) => {
-  return (
-    <div className="bg-white p-4 shadow-md rounded-lg">
-      <h2 className="text-lg font-semibold mb-2">Image Preview</h2>
+const ImagePreview = ({ image }) => (
+  <div className="relative w-full aspect-video bg-background-light rounded-lg flex items-center justify-center overflow-hidden">
+    {image ? (
       <img
         src={image}
-        alt="preview"
-        className="w-full rounded-md border"
+        alt="Uploaded preview"
+        className="absolute inset-0 w-full h-full object-cover rounded-lg"
       />
-    </div>
-  );
-};
+    ) : (
+      <div className="text-center text-subtle-light">
+        <span className="material-symbols-outlined text-4xl">image</span>
+        <p className="text-sm mt-1">Image will appear here</p>
+      </div>
+    )}
+  </div>
+);
 
 export default ImagePreview;

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import "../styles/SymptomEntryPage.css"; // ✅ CSS import
+
 import SymptomForm from "../components/Symptom/SymptomForm";
 import ImagePreview from "../components/Symptom/ImagePreview";
 import ResultCard from "../components/Symptom/ResultCard";
+
+
 
 const SymptomEntryPage = () => {
   const [loading, setLoading] = useState(false);
@@ -9,38 +13,37 @@ const SymptomEntryPage = () => {
   const [result, setResult] = useState(null);
 
   return (
-    <div className="min-h-screen p-5 bg-gray-100 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-5">Symptom Analysis</h1>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto font-display text-text-light bg-background-light min-h-screen">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold">Symptom Analysis</h1>
+        <p className="text-subtle-light mt-1">
+          Enter your symptoms and upload an image for AI review.
+        </p>
+      </header>
 
-      {/* --- FORM SECTION --- */}
-      <SymptomForm
-        setResult={setResult}
-        setImagePreview={setImagePreview}
-        setLoading={setLoading}
-      />
-
-      {/* --- IMAGE PREVIEW SECTION --- */}
-      {imagePreview && (
-        <div className="w-full md:w-2/3 lg:w-1/2 mt-5">
-          <ImagePreview image={imagePreview} />
+      <main className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
+        {/* --- Form Section --- */}
+        <div className="flex flex-col gap-8">
+          <SymptomForm
+            setResult={setResult}
+            setImagePreview={setImagePreview}
+            setLoading={setLoading}
+          />
+          {loading && (
+            <div className="animate-pulse h-40 bg-gray-300 rounded-lg"></div>
+          )}
         </div>
-      )}
 
-      {/* --- LOADING SKELETON --- */}
-      {loading && (
-        <div className="w-full md:w-2/3 lg:w-1/2 mt-6 animate-pulse">
-          <div className="h-40 bg-gray-300 rounded-md mb-3"></div>
-          <div className="h-6 bg-gray-300 rounded mb-2"></div>
-          <div className="h-6 bg-gray-300 rounded"></div>
+        {/* --- Result & Preview Section --- */}
+        <div className="flex flex-col gap-6">
+          {result && !loading && <ResultCard result={result} />}
+          {imagePreview && (
+            <div className="bg-surface-light rounded-DEFAULT shadow-soft sticky top-8 p-5 sm:p-6">
+              <ImagePreview image={imagePreview} />
+            </div>
+          )}
         </div>
-      )}
-
-      {/* --- RESULT SECTION --- */}
-      {result && !loading && (
-        <div className="w-full md:w-2/3 lg:w-1/2 mt-6">
-          <ResultCard result={result} />
-        </div>
-      )}
+      </main>
     </div>
   );
 };

@@ -1,64 +1,45 @@
 import React, { useState } from "react";
-import axios from "../../services/api";
 import toast from "react-hot-toast";
+import axios from "../../services/api";
+import "../../styles/SymptomEntryPage.css";
 
 const SymptomForm = ({ setResult, setImagePreview, setLoading }) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Allowed image types
   const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
 
-  // Handle Image Selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
-
-    // Invalid file type
     if (!allowedTypes.includes(file.type)) {
       toast.error("Only PNG / JPG images are allowed.");
       return;
     }
-
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
   };
 
-  // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return; // prevents double-submit
-
-    if (!text.trim()) {
-      toast.error("Please describe your symptoms.");
-      return;
-    }
-
-    // No image? allow but warn
-    if (!image) {
-      toast("No image uploaded. Proceeding with text only.", { icon: "⚠️" });
-    }
+    if (!text.trim()) return toast.error("Please describe your symptoms.");
+    setSubmitting(true);
+    setLoading(true);
+    setResult(null);
 
     try {
-      setSubmitting(true);
-      setLoading(true);
-      setResult(null);
-
       const formData = new FormData();
       formData.append("textDescription", text);
       if (image) formData.append("images", image);
 
-      const res = await axios.post("/symptoms", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      const res = await axios.post("/symptoms", formData);
 
-      setResult(res.data); // backend returns the whole entry including AI results
+      setResult(res.data);
       toast.success("Symptom analyzed successfully!");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to analyze symptoms. Try again.");
+      toast.error("Failed to analyze symptoms.");
     } finally {
       setSubmitting(false);
       setLoading(false);
@@ -72,53 +53,82 @@ const SymptomForm = ({ setResult, setImagePreview, setLoading }) => {
   };
 
   return (
-    <form
-      className="bg-white shadow-md rounded-lg p-4 w-full md:w-2/3 lg:w-1/2"
-      onSubmit={handleSubmit}
-    >
-      <h2 className="text-xl font-semibold mb-3">Describe Your Symptoms</h2>
+    <div className="bg-surface-light rounded-DEFAULT shadow-soft p-5 sm:p-6">
+      <h2 className="text-xl font-bold mb-4">Symptom Form</h2>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div>
+          <label
+            htmlFor="symptom-description"
+            className="block text-sm font-medium text-text-light mb-1"
+          >
+            Describe your symptoms
+          </label>
+          <textarea
+            id="symptom-description"
+            rows={5}
+            className="w-full rounded-lg border border-border-light focus:ring-primary-darker focus:border-primary-darker resize-none transition"
+            placeholder="e.g., I have a persistent rash on my arm..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </div>
 
-      {/* Text */}
-      <textarea
-        className="w-full p-2 border rounded-md"
-        rows="4"
-        placeholder="Describe your symptoms here..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
+        <div>
+          <label
+            htmlFor="file-upload"
+            className="block text-sm font-medium text-text-light mb-1"
+          >
+            Upload an image
+          </label>
+          <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
+            <div className="text-center">
+              <span className="material-symbols-outlined text-4xl text-gray-400">
+                upload_file
+              </span>
+              <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
+                <label
+                  htmlFor="file-upload"
+                  className="relative cursor-pointer rounded-md bg-white font-semibold text-primary-darker hover:text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-darker focus-within:ring-offset-2"
+                >
+                  <span>Upload a file</span>
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="sr-only"
+                    onChange={handleImageChange}
+                  />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              <p className="text-xs leading-5 text-gray-500 mt-2">
+                PNG, JPG, JPEG up to 10MB
+              </p>
+            </div>
+          </div>
+        </div>
 
-      {/* Image */}
-      <div className="mt-3">
-        <p className="font-medium mb-1">Upload Image (optional)</p>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="block"
-        />
-      </div>
-
-      {/* Buttons */}
-      <div className="flex gap-3 mt-4">
-        <button
-          type="submit"
-          disabled={submitting}
-          className={`px-4 py-2 rounded text-white ${
-            submitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
-          {submitting ? "Submitting..." : "Submit"}
-        </button>
-
-        <button
-          type="button"
-          onClick={resetForm}
-          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-        >
-          Reset
-        </button>
-      </div>
-    </form>
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            type="submit"
+            disabled={submitting}
+            className={`w-full sm:w-auto flex-1 justify-center inline-flex items-center px-6 py-3 text-base font-medium rounded-lg shadow-sm text-white ${
+              submitting
+                ? "bg-primary-darker/70 cursor-not-allowed"
+                : "bg-primary-darker hover:bg-primary"
+            }`}
+          >
+            {submitting ? "Analyzing..." : "Submit for Analysis"}
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            className="w-full sm:w-auto justify-center inline-flex items-center px-6 py-3 text-base font-medium rounded-lg shadow-sm text-text-light bg-white hover:bg-gray-50"
+          >
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
