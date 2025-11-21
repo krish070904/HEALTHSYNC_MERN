@@ -1,21 +1,46 @@
+// frontend/src/services/medServices.js
 import api from "./api";
 
+// Fetch all medications for the logged-in user
 export const getMedications = async () => {
-  const res = await api.get("/medications");
-  return res.data;
+  try {
+    const res = await api.get("/medications");
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching medications:", err);
+    throw err;
+  }
 };
 
+// Add a new medication schedule
 export const addMedication = async (data) => {
-  const res = await api.post("/medications", data);
-  return res.data;
+  try {
+    const res = await api.post("/medications", data);
+    return res.data;
+  } catch (err) {
+    console.error("Error adding medication:", err);
+    throw err;
+  }
 };
 
-export const updateAdherence = async (medId, date, status) => {
-  const res = await api.put(`/medications/${medId}/adherence`, { date, status });
-  return res.data;
+// Update adherence status for a medication
+export const updateAdherence = async (id, data) => {
+  try {
+    const res = await api.put(`/medications/${id}/adherence`, data);
+    return res.data;
+  } catch (err) {
+    console.error("Error updating adherence:", err);
+    throw err;
+  }
 };
 
-export const deleteMedication = async (medId) => {
-  const res = await api.delete(`/medications/${medId}`);
-  return res.data;
+// Delete a medication schedule
+export const deleteMedication = async (id) => {
+  try {
+    const res = await api.delete(`/medications/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error("Error deleting medication:", err);
+    throw err;
+  }
 };

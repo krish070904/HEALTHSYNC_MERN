@@ -19,56 +19,89 @@ if (!admin.apps.length) {
 export const sendNotification = async (alert) => {
   try {
     const user = await User.findById(alert.userId);
-    if (!user) throw new Error("User not found for alert");
+    if (!user) {
+      console.error(`User not found for alert ${alert._id}`);
+      throw new Error("User not found for alert");
+    }
 
     const email = user.email;
     const phone = user.phone;
     const fcmToken = user.fcmToken;
 
+    let sentChannels = [];
+
     // Email
     if (alert.channels.includes("email") && email) {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: process.env.SMTP_SECURE === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
-      await transporter.sendMail({
-        from: `"Healthsync Alerts" <${process.env.SMTP_USER}>`,
-        to: email,
-        subject: `Health Alert: ${alert.type}`,
-        text: alert.message,
-      });
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: process.env.SMTP_PORT,
+          secure: process.env.SMTP_SECURE === "true",
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
+        await transporter.sendMail({
+          from: `"Healthsync Alerts" <${process.env.SMTP_USER}>`,
+          to: email,
+          subject: `Health Alert: ${alert.type}`,
+          text: alert.message,
+        });
+        sentChannels.push("email");
+        console.log(`✓ Email sent to ${email} for alert ${alert._id}`);
+      } catch (emailErr) {
+        console.error(`✗ Email failed for ${email}:`, emailErr.message);
+      }
     }
 
     // SMS
     if (alert.channels.includes("sms") && phone) {
-      const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-      await client.messages.create({
-        body: alert.message,
-        from: process.env.TWILIO_PHONE,
-        to: phone,
-      });
+      try {
+        if (!process.env.TWILIO_SID || !process.env.TWILIO_AUTH_TOKEN) {
+          console.warn("Twilio credentials not configured");
+        } else {
+          const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+          await client.messages.create({
+            body: alert.message,
+            from: process.env.TWILIO_PHONE,
+            to: phone,
+          });
+          sentChannels.push("sms");
+          console.log(`✓ SMS sent to ${phone} for alert ${alert._id}`);
+        }
+      } catch (smsErr) {
+        console.error(`✗ SMS failed for ${phone}:`, smsErr.message);
+      }
     }
 
     // Push Notification
     if (alert.channels.includes("app") && fcmToken) {
-      await admin.messaging().send({
-        token: fcmToken,
-        notification: {
-          title: `Health Alert: ${alert.type}`,
-          body: alert.message,
-        },
-      });
+      try {
+        await admin.messaging().send({
+          token: fcmToken,
+          notification: {
+            title: `Health Alert: ${alert.type}`,
+            body: alert.message,
+          },
+        });
+        sentChannels.push("app");
+        console.log(`✓ Push notification sent for alert ${alert._id}`);
+      } catch (pushErr) {
+        console.error(`✗ Push notification failed:`, pushErr.message);
+      }
     }
 
-    alert.status = "sent";
+    alert.status = sentChannels.length > 0 ? "sent" : "pending";
     await alert.save();
+    
+    if (sentChannels.length === 0) {
+      console.warn(`No notifications sent for alert ${alert._id}`);
+    }
   } catch (err) {
     console.error("Error sending alert:", err);
+    alert.status = "pending";
+    await alert.save();
   }
 };
 

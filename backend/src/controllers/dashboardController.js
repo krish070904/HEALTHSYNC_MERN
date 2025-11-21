@@ -1,5 +1,6 @@
 import SymptomEntry from "../models/SymptomEntry.js";
-import User from "../models/User.js";   
+import User from "../models/User.js";
+import MedSchedule from "../models/MedSchedule.js";
 
 // ------------------------ HELPERS ------------------------
 
@@ -15,10 +16,41 @@ const getActiveAlerts = async (userId) => {
 };
 
 const getMedicationSchedule = async (userId) => {
-  return {
-    today: [],
-    upcoming: []
-  };
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    // Fetch all active medications for the user
+    const medications = await MedSchedule.find({
+      userId,
+      startDate: { $lte: now },
+      endDate: { $gte: today }
+    }).sort({ createdAt: -1 });
+
+    // Add status based on adherence log for today
+    const medsWithStatus = medications.map(med => {
+      const todayAdherence = med.adherenceLog?.find(log => {
+        const logDate = new Date(log.date);
+        return logDate.toDateString() === today.toDateString();
+      });
+
+      return {
+        _id: med._id,
+        medName: med.medName,
+        dosage: med.dosage,
+        times: med.times,
+        notes: med.notes,
+        status: todayAdherence?.status || 'pending',
+        startDate: med.startDate,
+        endDate: med.endDate
+      };
+    });
+
+    return medsWithStatus;
+  } catch (error) {
+    console.error("Error fetching medication schedule:", error);
+    return [];
+  }
 };
 
 const getDietPlan = async (userId) => {
