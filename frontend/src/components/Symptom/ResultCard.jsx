@@ -3,22 +3,30 @@ import { AlertTriangle } from "lucide-react";
 import "../../styles/SymptomEntryPage.css";
 
 const severityColors = {
-  low: "bg-green-100 text-green-700 border-green-300",
-  medium: "bg-yellow-100 text-yellow-700 border-yellow-300",
-  high: "bg-red-100 text-red-700 border-red-300",
+  low: "bg-emerald-100 text-emerald-700 border border-emerald-300",
+  medium: "bg-orange-100 text-orange-700 border border-orange-300",
+  high: "bg-red-100 text-red-700 border border-red-300",
 };
 
 const ResultCard = ({ result }) => {
   if (!result) return null;
-  const severity = result?.severity || "low";
+  
+  // Backend returns severity_level, fallback to low if missing
+  const severity = result?.severity_level || "low";
+  const condition = result?.predicted_condition || "Unknown Condition";
+  
+  // Backend returns images array, take the first one if available
+  const imageUrl = result.images && result.images.length > 0 
+    ? `http://localhost:5000/${result.images[0]}` 
+    : null;
 
   return (
     <div className="bg-surface-light rounded-DEFAULT shadow-soft p-5 sm:p-6">
       <h2 className="text-xl font-bold mb-4">AI Analysis Result</h2>
 
-      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${severityColors[severity]}`}>
-        {severity === "high" ? "⚠️" : severity === "medium" ? "😐" : "✅"}{" "}
-        {severity.charAt(0).toUpperCase() + severity.slice(1)} Severity
+      <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${severityColors[severity] || severityColors.low}`}>
+        {severity === "high" ? "🚨" : severity === "medium" ? "⚠️" : "✅"}{" "}
+        {severity === "high" ? "HIGH SEVERITY" : severity === "medium" ? "MEDIUM SEVERITY" : "LOW SEVERITY"}
       </div>
 
       {severity === "high" && (

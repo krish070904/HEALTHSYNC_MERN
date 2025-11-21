@@ -13,6 +13,7 @@ import SymptomEntryPage from "./pages/SymptomEntryPage";
 import DailyMonitoringPage from "./pages/DailyMonitoringPage";
 import DietRecipesPage from "./pages/DietRecipesPage"; 
 import NotificationsPage from "./pages/NotificationsPage";
+import ChatPage from "./pages/ChatPage";
 function App() {
   return (
     <Router>
@@ -48,6 +49,7 @@ function App() {
 
         <Route path="/symptom-entry" element={<SymptomEntryPage />} />
         <Route path="/daily-monitoring" element={<DailyMonitoringPage />} />
+        <Route path="/chat" element={<ChatPage />} />
       </Routes>
     </Router>
   );

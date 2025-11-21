@@ -4,6 +4,7 @@ import "../styles/SymptomEntryPage.css"; // ✅ CSS import
 import SymptomForm from "../components/Symptom/SymptomForm";
 import ImagePreview from "../components/Symptom/ImagePreview";
 import ResultCard from "../components/Symptom/ResultCard";
+import FuturisticLoader from "../components/Symptom/FuturisticLoader";
 
 
 
@@ -11,6 +12,14 @@ const SymptomEntryPage = () => {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [result, setResult] = useState(null);
+
+  const resultRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (result && !loading && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [result, loading]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto font-display text-text-light bg-background-light min-h-screen">
@@ -21,25 +30,31 @@ const SymptomEntryPage = () => {
         </p>
       </header>
 
-      <main className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
-        {/* --- Form Section --- */}
-        <div className="flex flex-col gap-8">
+      <main className="flex flex-col gap-8">
+        {/* --- Top Section: Form & Preview --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <SymptomForm
             setResult={setResult}
             setImagePreview={setImagePreview}
             setLoading={setLoading}
           />
-          {loading && (
-            <div className="animate-pulse h-40 bg-gray-300 rounded-lg"></div>
-          )}
+          
+          <div className="flex flex-col gap-6">
+             {/* Always show the preview box, it has a placeholder state */}
+             <div className="bg-surface-light rounded-DEFAULT shadow-soft p-5 sm:p-6 sticky top-8">
+               <h3 className="text-lg font-semibold mb-4 text-text-light">Image Preview</h3>
+               <ImagePreview image={imagePreview} />
+             </div>
+          </div>
         </div>
 
-        {/* --- Result & Preview Section --- */}
-        <div className="flex flex-col gap-6">
-          {result && !loading && <ResultCard result={result} />}
-          {imagePreview && (
-            <div className="bg-surface-light rounded-DEFAULT shadow-soft sticky top-8 p-5 sm:p-6">
-              <ImagePreview image={imagePreview} />
+        {/* --- Bottom Section: Result or Loader --- */}
+        <div className="w-full" ref={resultRef}>
+          {loading && <FuturisticLoader />}
+          
+          {result && !loading && (
+            <div className="animate-[fadeIn_0.5s_ease-out]">
+              <ResultCard result={result} />
             </div>
           )}
         </div>

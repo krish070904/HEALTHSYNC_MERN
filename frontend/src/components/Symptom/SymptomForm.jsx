@@ -8,13 +8,13 @@ const SymptomForm = ({ setResult, setImagePreview, setLoading }) => {
   const [image, setImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Only PNG / JPG images are allowed.");
+      toast.error("Only PNG, JPG, WEBP, or AVIF images are allowed.");
       return;
     }
     setImage(file);
@@ -101,7 +101,7 @@ const SymptomForm = ({ setResult, setImagePreview, setLoading }) => {
                 <p className="pl-1">or drag and drop</p>
               </div>
               <p className="text-xs leading-5 text-gray-500 mt-2">
-                PNG, JPG, JPEG up to 10MB
+                PNG, JPG, WEBP, AVIF up to 10MB
               </p>
             </div>
           </div>
