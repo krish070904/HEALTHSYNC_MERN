@@ -1,12 +1,14 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const location = useLocation();
   const fileInputRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [profileImage, setProfileImage] = useState(
     "https://lh3.googleusercontent.com/aida-public/AB6AXuCq7A7u_bex9FXa_-2s4tWovTclbrwcYKJsTUI4Y5fxd-hLOcXD8fhMAU6QyCv5QYR9FxMaLmO3tIyGouDjwIfr_a8GV-kWzCQWTjH7frTqPGRMa4rsidUWZfGl-I89qb57vrvbpisv9GY3xxt4oJE-bvhrmWP0dxCiaD-LdFB1yi1iRb_ToRi6SXEQSMt7SomcbxxfMt2WMo0mbMadtn56z1HhlATgYSoHXUXoq7iib3ubN4AE77nj8uuGW7blxohvOh9FvFdjI-rB"
   );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const isActive = (path) => {
     return location.pathname === path
@@ -25,6 +27,20 @@ const Navbar = () => {
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm shadow-sm">
@@ -109,8 +125,11 @@ const Navbar = () => {
             </Link>
 
             {/* Profile Dropdown */}
-            <div className="relative group">
-              <button className="flex items-center space-x-2">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                className="flex items-center space-x-2 focus:outline-none"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
                 <div
                   className="size-9 rounded-full bg-cover bg-center"
                   style={{
@@ -119,7 +138,13 @@ const Navbar = () => {
                 ></div>
               </button>
 
-              <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200">
+              <div
+                className={`absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 ${
+                  isDropdownOpen
+                    ? "opacity-100 visible transform scale-100"
+                    : "opacity-0 invisible transform scale-95"
+                }`}
+              >
                 <button
                   onClick={triggerFileInput}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
