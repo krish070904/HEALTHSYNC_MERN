@@ -110,7 +110,7 @@ export default function Login() {
             <p className="mt-8 text-center text-sm text-gray-600">
               Not a member?{" "}
               <a
-                href="/registration"
+                href="/register"
                 className="font-semibold leading-6 text-gray-700 hover:text-[#F4C430]"
               >
                 Register now

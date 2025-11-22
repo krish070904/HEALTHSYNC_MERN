@@ -24,7 +24,7 @@ export const analyzeHealthTrends = async (user, monitoringHistory) => {
       symptoms: entry.symptoms?.note || 'None'
     }));
 
-    const prompt = `You are a health analysis AI assistant for HealthSync, an Indian health monitoring app.
+    const prompt = `you are biomistral7b ,You are a health analysis AI assistant for HealthSync, an Indian health monitoring app.
 
 **User Profile:**
 - Name: ${user.name}

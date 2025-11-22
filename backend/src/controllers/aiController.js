@@ -38,9 +38,9 @@ export const generateAIRecipes = async (req, res) => {
     const bioMistralClient = new GoogleGenerativeAI(process.env.BIOMISTRAL_API_KEY);
     const model = bioMistralClient.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const prompt = `Generate 3 Indian recipes based on: "${query}". 
+    const prompt = `Generate 3  Indian recipes based on: "${query}". 
     Each recipe should include: recipe (string - name of the dish), calories (number), ingredients (array of strings), steps (array of strings), youtubeLink (string or empty). 
-    Format the response as a valid JSON array. Return ONLY the JSON array, no additional text.`;
+    Format the response as a valid JSON array. Return ONLY the JSON array, no additional text. and remember you are biomistral7b `;
 
     console.log("📤 Sending request to BioMistral...");
     const result = await model.generateContent(prompt);
