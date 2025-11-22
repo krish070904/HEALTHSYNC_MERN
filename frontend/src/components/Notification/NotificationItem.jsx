@@ -14,7 +14,13 @@ const NotificationItem = ({ alert, setAlerts }) => {
   const [expanded, setExpanded] = useState(false);
 
   // Determine severity key
-  const sevKey = typeof alert.severity === "string" ? alert.severity.toLowerCase() : alert.severity;
+  let sevKey = typeof alert.severity === "string" ? alert.severity.toLowerCase() : alert.severity;
+  
+  // Force symptom alerts to be high severity (red) as requested
+  if (alert.type === 'symptom') {
+    sevKey = 'high';
+  }
+
   const sev = severityColors[sevKey] || severityColors.low;
 
   const markResolved = async () => {
