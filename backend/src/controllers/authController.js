@@ -100,7 +100,7 @@ export const updateProfileImage = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = `/uploads/profiles/${req.file.filename}`;
     user.profileImage = imageUrl;
     await user.save();
 

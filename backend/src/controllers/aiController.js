@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import axios from "axios";
 
 const parseAIResponse = (text) => {
   try {
@@ -70,19 +69,13 @@ export const generateAIRecipes = async (req, res) => {
       mealType: "AI Generated"
     }));
 
-    // 2️⃣ HuggingFace for images
+    // 2️⃣ Pollinations AI for images
     for (let r of recipes) {
       try {
-        const imgResp = await axios.post(
-          "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2",
-          { inputs: `Photo of Indian dish: ${r.recipe}` },
-          {
-            headers: { Authorization: `Bearer ${process.env.HF_API_KEY}` },
-            responseType: "arraybuffer",
-          }
-        );
-        const base64 = Buffer.from(imgResp.data, "binary").toString("base64");
-        r.image = `data:image/png;base64,${base64}`;
+        // Generate image using Pollinations AI
+        const imagePrompt = encodeURIComponent(`Photo of delicious Indian dish: ${r.recipe}, food photography, professional, appetizing`);
+        r.image = `https://image.pollinations.ai/prompt/${imagePrompt}?width=1024&height=1024&nologo=true&enhance=true`;
+        console.log(`✅ Generated image URL for ${r.recipe}`);
       } catch (imgErr) {
         console.error("Image generation failed for recipe:", r.recipe, imgErr.message);
         // Use a placeholder if image generation fails

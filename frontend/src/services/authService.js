@@ -17,3 +17,13 @@ export const getMe = async () => {
   const response = await api.get("/auth/me");
   return response.data;
 };
+
+// Update profile image
+export const updateProfileImage = async (formData) => {
+  const response = await api.put("/auth/update-profile-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};

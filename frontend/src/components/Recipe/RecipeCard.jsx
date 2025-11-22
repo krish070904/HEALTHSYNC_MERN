@@ -10,12 +10,28 @@ const badgeColors = {
 };
 
 const RecipeCard = ({ recipe, onClick }) => {
+  const [imgError, setImgError] = React.useState(false);
+  const [imgLoading, setImgLoading] = React.useState(true);
+
   return (
     <div className="meal-card cursor-pointer" onClick={onClick}>
-      <img
-        src={recipe.image || "https://via.placeholder.com/300x200"}
-        alt={recipe.recipe}
-      />
+      <div className="relative">
+        {imgLoading && !imgError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+            <span className="text-gray-400">Loading image...</span>
+          </div>
+        )}
+        <img
+          src={imgError ? "https://via.placeholder.com/300x200?text=Recipe+Image" : (recipe.image || "https://via.placeholder.com/300x200")}
+          alt={recipe.recipe}
+          onLoad={() => setImgLoading(false)}
+          onError={() => {
+            setImgError(true);
+            setImgLoading(false);
+          }}
+          className={imgLoading ? "opacity-0" : "opacity-100 transition-opacity duration-300"}
+        />
+      </div>
       <div className="p-4">
         <h3 className="font-bold text-lg">{recipe.recipe}</h3>
         <div className="mt-2 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

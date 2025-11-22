@@ -3,6 +3,9 @@ import PillIcon from "../../assets/DashboardAssets/pill_8064036.png"; // adjust 
 
 const MedicationCard = ({ meds }) => {
   const safeMeds = Array.isArray(meds) ? meds : [];
+  
+  console.log("MedicationCard received meds:", meds);
+  console.log("SafeMeds array:", safeMeds);
 
   // Get status color styling similar to AlertsCard
   const getStatusColor = (status) => {
@@ -60,7 +63,7 @@ const MedicationCard = ({ meds }) => {
       </div>
 
       {/* Body */}
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
         {safeMeds.length === 0 ? (
           <p className="text-subtle-light dark:text-subtle-dark text-center py-4">
             No medications scheduled

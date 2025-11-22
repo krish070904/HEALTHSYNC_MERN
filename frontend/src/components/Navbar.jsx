@@ -1,12 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import HealthSyncLogo from "../assets/Logo/HealthSyncLogo.png";
 import { Link, useLocation } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import { updateProfileImage } from "../services/authService";
 
 const Navbar = () => {
   const location = useLocation();
   const fileInputRef = useRef(null);
   const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user, updateUser } = useContext(AuthContext);
 
   const toggleDropdown = () => setDropdownOpen(prev => !prev);
 
@@ -22,9 +25,18 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  const [profileImage, setProfileImage] = useState(
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCq7A7u_bex9FXa_-2s4tWovTclbrwcYKJsTUI4Y5fxd-hLOcXD8fhMAU6QyCv5QYR9FxMaLmO3tIyGouDjwIfr_a8GV-kWzCQWTjH7frTqPGRMa4rsidUWZfGl-I89qb57vrvbpisv9GY3xxt4oJE-bvhrmWP0dxCiaD-LdFB1yi1iRb_ToRi6SXEQSMt7SomcbxxfMt2WMo0mbMadtn56z1HhlATgYSoHXUXoq7iib3ubN4AE77nj8uuGW7blxohvOh9FvFdjI-rB"
-  );
+
+  const getProfileImageUrl = (path) => {
+    if (!path) return "https://lh3.googleusercontent.com/aida-public/AB6AXuCq7A7u_bex9FXa_-2s4tWovTclbrwcYKJsTUI4Y5fxd-hLOcXD8fhMAU6QyCv5QYR9FxMaLmO3tIyGouDjwIfr_a8GV-kWzCQWTjH7frTqPGRMa4rsidUWZfGl-I89qb57vrvbpisv9GY3xxt4oJE-bvhrmWP0dxCiaD-LdFB1yi1iRb_ToRi6SXEQSMt7SomcbxxfMt2WMo0mbMadtn56z1HhlATgYSoHXUXoq7iib3ubN4AE77nj8uuGW7blxohvOh9FvFdjI-rB";
+    if (path.startsWith("http")) return path;
+    return `http://localhost:5000${path}`;
+  };
+
+  const [profileImage, setProfileImage] = useState(getProfileImageUrl(user?.profileImage));
+
+  useEffect(() => {
+    setProfileImage(getProfileImageUrl(user?.profileImage));
+  }, [user?.profileImage]);
 
   const isActive = (path) => {
     return location.pathname === path
@@ -32,11 +44,28 @@ const Navbar = () => {
       : "border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white";
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      try {
+        // Optimistic update
+        const objectUrl = URL.createObjectURL(file);
+        setProfileImage(objectUrl);
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const response = await updateProfileImage(formData);
+        if (response.user) {
+          updateUser(response.user);
+        }
+      } catch (error) {
+        console.error("Failed to upload profile image:", error);
+        // Revert on failure
+        setProfileImage(getProfileImageUrl(user?.profileImage));
+        const errorMessage = error.response?.data?.message || "Failed to update profile picture. Please try again.";
+        alert(errorMessage);
+      }
     }
   };
 
@@ -176,8 +205,7 @@ const Navbar = () => {
             <div
               className="size-9 rounded-full bg-cover bg-center mr-2"
               style={{
-                backgroundImage:
-                  "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDH2L7uHY8gsZXWV6Zpg4MaI55VYt5ODWJp0LdLvBsD7XoNKVdiPsXxvX_TBsY4JLAmz5fdfV14zbQ1MnwOafyNAdnJNBoQz2xS3uXht3iXU5FjnefXU-fepcmdvWQd0PVyn7f3G5UU7ZxHKsi0g9temflpTvYeXgPwv7vLEt7xvbMbVvFFZUT7ZXlpIiV0qOpwtC22Y1WUvfsWgLHo5OQ5wMlrHqFnv_TFOwylOz2VvgurdhyVEADk7fXezQ2-SYgmeWVU8KcWt1l2')",
+                backgroundImage: `url('${profileImage}')`,
               }}
             ></div>
 

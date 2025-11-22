@@ -56,14 +56,31 @@ export const sendNotification = async (alert) => {
 
     // Send SMS via Twilio
     if (alert.channels.includes("sms") && user.phone) {
-      const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-      promises.push(
-        twilioClient.messages.create({
-          body: `${alert.type.toUpperCase()} Alert: ${alert.message} (Severity: ${alert.severity})`,
-          from: process.env.TWILIO_PHONE,
-          to: user.phone,
-        }).catch(err => console.error("SMS send failed:", err))
-      );
+      try {
+        const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+        
+        // Format phone number to E.164
+        let formattedPhone = user.phone.replace(/\D/g, ''); // Remove non-digits
+        if (formattedPhone.length === 10) {
+          formattedPhone = `+91${formattedPhone}`; // Default to India
+        } else if (formattedPhone.length > 10 && !user.phone.startsWith('+')) {
+          formattedPhone = `+${formattedPhone}`;
+        } else {
+          formattedPhone = user.phone; // Fallback to original
+        }
+
+        console.log(`Attempting to send SMS to: ${formattedPhone}`);
+
+        promises.push(
+          twilioClient.messages.create({
+            body: `${alert.type.toUpperCase()} Alert: ${alert.message} (Severity: ${alert.severity})`,
+            from: process.env.TWILIO_PHONE,
+            to: formattedPhone,
+          }).catch(err => console.error("SMS send failed:", err))
+        );
+      } catch (err) {
+        console.error("Twilio initialization failed:", err);
+      }
     }
 
     // App notification is handled by the Alert model being saved

@@ -17,7 +17,7 @@ const AlertsCard = ({ alerts }) => {
         </div>
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">{alerts.length}</span>
       </div>
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
         {alerts.map(alert => (
           <div key={alert._id} className={`${getSeverityColor(alert.severityScore)} p-3 rounded-lg flex items-start space-x-4`}>
             <span className="material-symbols-outlined mt-1">{alert.severityScore >= 70 ? "error" : "notification_important"}</span>

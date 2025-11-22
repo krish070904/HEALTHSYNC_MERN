@@ -1,5 +1,8 @@
 import SymptomEntry from "../models/SymptomEntry.js";
-import User from "../models/User.js";   
+import User from "../models/User.js";
+import MedSchedule from "../models/MedSchedule.js";
+
+import DietPlan from "../models/DietPlan.js";
 
 // ------------------------ HELPERS ------------------------
 
@@ -14,18 +17,81 @@ const getActiveAlerts = async (userId) => {
     .sort({ createdAt: -1 });
 };
 
+
 const getMedicationSchedule = async (userId) => {
-  return {
-    today: [],
-    upcoming: []
-  };
+  try {
+    console.log("=== getMedicationSchedule called ===");
+    console.log("userId:", userId);
+    
+    const now = new Date();
+    console.log("Current date/time:", now);
+
+    // Match the logic from getUserMedications - fetch all medications where endDate >= today
+    // This will include medications that start today, started in the past, or will start in the future
+    const medications = await MedSchedule.find({
+      userId,
+      endDate: { $gte: now }
+    }).sort({ startDate: 1 });
+
+    console.log(`Found ${medications.length} total medications for user`);
+    
+    if (medications.length > 0) {
+      console.log("Sample medication:", JSON.stringify(medications[0], null, 2));
+    }
+
+    // Process medications with status
+    const processedMeds = medications.map(med => {
+      // Check today's adherence log
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const todayLog = med.adherenceLog?.find(log => {
+        const logDate = new Date(log.date);
+        logDate.setHours(0, 0, 0, 0);
+        return logDate.getTime() === today.getTime();
+      });
+
+      return {
+        _id: med._id,
+        medName: med.medName,
+        dosage: med.dosage,
+        times: med.times,
+        notes: med.notes,
+        status: todayLog ? todayLog.status : "pending",
+        startDate: med.startDate,
+        endDate: med.endDate
+      };
+    });
+
+    console.log("Processed medications:", JSON.stringify(processedMeds, null, 2));
+    console.log("=== getMedicationSchedule complete ===");
+    
+    return processedMeds;
+  } catch (error) {
+    console.error("Error in getMedicationSchedule:", error);
+    return [];
+  }
 };
 
 const getDietPlan = async (userId) => {
-  return {
-    day: "Monday",
-    meals: []
-  };
+  try {
+    const dietPlan = await DietPlan.findOne({ userId });
+    if (!dietPlan) return { day: "Today", meals: [] };
+
+    // Get today's day name (e.g., "Monday")
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const todayName = days[new Date().getDay()];
+
+    const todayMeals = dietPlan.dailyMeals.find(d => d.day === todayName);
+    
+    return {
+      day: todayName,
+      meals: todayMeals ? todayMeals.meals : []
+    };
+  } catch (error) {
+    console.error("Error fetching diet plan:", error);
+    return { day: "Today", meals: [] };
+  }
 };
 
 const getSeverityMetrics = (entries) => {
