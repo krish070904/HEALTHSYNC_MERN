@@ -51,24 +51,24 @@ const NotificationsPage = () => {
   });
 
   return (
-    <main className="px-4 py-8 sm:px-6 md:py-12 lg:px-16 xl:px-24">
-      <div className="mx-auto max-w-4xl flex flex-col gap-8">
+    <main className="px-4 py-6 sm:px-6 md:py-8 lg:px-8 xl:px-12 w-full max-w-7xl mx-auto">
+      <div className="flex flex-col gap-6 sm:gap-8">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
           <div className="flex flex-col gap-1">
-            <p className="text-3xl font-bold leading-tight tracking-[-0.03em] sm:text-4xl">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
               Notifications
             </p>
-            <p className="text-base text-[#8a7b60] dark:text-white/60">
-              You have <span className="font-bold text-[#181511] dark:text-white">{alerts.length} new</span> notifications.
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+              You have <span className="font-bold text-gray-900 dark:text-white">{alerts.length} new</span> notifications.
             </p>
           </div>
           <button
             onClick={markAllResolved}
-            className="flex h-11 min-w-[84px] items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white"
+            className="w-full sm:w-auto flex h-10 sm:h-11 items-center justify-center gap-2 rounded-full bg-primary px-4 sm:px-6 text-sm font-bold text-white transition-transform active:scale-95 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-900"
           >
-            <span className="material-symbols-outlined text-xl">done_all</span>
-            <span className="truncate">Mark All as Read</span>
+            <span className="material-symbols-outlined text-lg sm:text-xl">done_all</span>
+            <span className="whitespace-nowrap">Mark All as Read</span>
           </button>
         </div>
 
