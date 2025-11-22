@@ -20,7 +20,7 @@ HealthSync is a comprehensive health management application built with the MERN 
 - **Health Dashboard**: Comprehensive dashboard with health metrics and insights
 - **Medication Management**: Track medications with automated reminders
 - **Symptom Tracking**: Log and analyze symptoms over time
-- **AI-Powered Insights**: Get health recommendations using Google's Gemini AI
+- **AI-Powered Insights**: Get health recommendations using BioMistral AI
 - **Daily Monitoring**: Log daily health metrics (sleep, water intake, meals, mood, vitals)
 - **Diet Recommendations**: Personalized diet plans based on health data
 - **Alert System**: Email and SMS notifications for important health reminders
@@ -45,7 +45,7 @@ HealthSync is a comprehensive health management application built with the MERN 
 - **MongoDB** with **Mongoose** - Database
 - **JWT** - Authentication
 - **Bcrypt.js** - Password hashing
-- **Google Generative AI** - AI-powered features
+- **BioMistral-7B** - AI-powered features
 - **Twilio** - SMS notifications
 - **Nodemailer** - Email notifications
 - **Node-Cron** - Job scheduling
@@ -66,7 +66,7 @@ Before you begin, ensure you have the following installed:
 
 ### Optional (for full functionality):
 - **Twilio Account** - For SMS notifications ([Sign up](https://www.twilio.com/))
-- **Google Gemini API Key** - For AI features ([Get API key](https://makersuite.google.com/app/apikey))
+-**BIOMISTRAL_7B** - For AI features
 - **Email Account** - For SMTP email notifications (Gmail recommended)
 
 ## 📥 Installation
@@ -111,8 +111,7 @@ MONGODB_URI=mongodb://localhost:27017/healthsync
 # JWT Secret (generate a random string)
 JWT_SECRET=your_super_secret_jwt_key_here_change_this_in_production
 
-# Google Gemini AI API Keys
-GEMINI_API_KEY=your_gemini_api_key_here
+# BIOMISTRAL API Key
 BIOMISTRAL_API_KEY=your_biomistral_api_key_here
 
 # Hugging Face API (for ML models)
@@ -161,11 +160,6 @@ VITE_API_URL=http://localhost:5000
 - Generate a random secure string (at least 32 characters)
 - You can use: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
-#### Google Gemini API:
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the API key for both `GEMINI_API_KEY` and `BIOMISTRAL_API_KEY`
 
 #### Hugging Face API:
 1. Sign up at [Hugging Face](https://huggingface.co/)
@@ -347,7 +341,7 @@ npm install
 
 #### 5. **AI Features Not Working**
 **Solution:**
-- Verify your `GEMINI_API_KEY` and `BIOMISTRAL_API_KEY` are valid
+- Verify your `BIOMISTRAL_API_KEY` is valid You can also use any other api key if wanted
 - Check API key quotas and limits
 - Ensure you have internet connection
 
@@ -365,7 +359,7 @@ If you encounter issues:
 2. Verify all environment variables are set correctly
 3. Ensure all dependencies are installed
 4. Check MongoDB connection
-5. Review the API service credentials (Gemini, Twilio, SMTP)
+5. Review the API service credentials (BioMistral, Twilio, SMTP)
 
 ## 📝 License
 
@@ -377,7 +371,7 @@ This project is part of a Final Year Project.
 
 ## 🙏 Acknowledgments
 
-- Google Generative AI for health insights
+- BIOMISTRAL for health insights
 - MongoDB for database services
 - Twilio for SMS capabilities
 - All open-source contributors
