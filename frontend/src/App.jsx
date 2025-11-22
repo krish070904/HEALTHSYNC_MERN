@@ -17,8 +17,15 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ChatPage from "./pages/ChatPage";
 import MedicationScheduler from "./pages/MedicationScheduler";
 import MainLayout from "./components/MainLayout";
+import SplashScreen from "./components/SplashScreen";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  if (loading) {
+    return <SplashScreen onFinish={() => setLoading(false)} />;
+  }
+
   return (
     <Router>
       <Routes>
