@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import HealthSyncLogo from "../assets/Logo/HealthSyncLogo.png";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -54,8 +55,7 @@ const Navbar = () => {
               to="/dashboard"
               className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white"
             >
-              <span className="text-2xl">🏥</span>
-              <span className="font-display">Healthsync</span>
+              <img src={HealthSyncLogo} alt="Healthsync Logo" className="h-8 w-auto" />
             </Link>
 
             {/* Primary Navigation (Desktop) */}
