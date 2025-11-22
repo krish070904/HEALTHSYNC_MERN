@@ -8,9 +8,9 @@ export const generateAIDiet = async (req, res) => {
     const userId = req.user._id;
     const { query } = req.body;
 
-    // 1️⃣ Gemini LLM for recipe text
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // 1️⃣ BioMistral AI for recipe text
+    const bioMistralClient = new GoogleGenerativeAI(process.env.BIOMISTRAL_API_KEY);
+    const model = bioMistralClient.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `Generate 1 Indian recipe based on: "${query}". 
     Include: recipe (string - name of the dish), calories (number), ingredients (array of strings), steps (array of strings), youtubeLink (string or empty). 
@@ -26,7 +26,7 @@ export const generateAIDiet = async (req, res) => {
       const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       recipe = JSON.parse(cleaned);
     } catch (parseErr) {
-      console.error("Failed to parse Gemini response:", parseErr);
+      console.error("Failed to parse BioMistral response:", parseErr);
       return res.status(500).json({ message: "Failed to parse AI response" });
     }
 
@@ -95,8 +95,8 @@ export const generatePersonalizedDietPlan = async (userId, data) => {
     const user = await User.findById(userId);
     if (!user) return;
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const bioMistralClient = new GoogleGenerativeAI(process.env.BIOMISTRAL_API_KEY);
+    const model = bioMistralClient.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Prepare context from monitoring data
     const context = `

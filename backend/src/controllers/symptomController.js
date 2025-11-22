@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const bioMistralClient = new GoogleGenerativeAI(process.env.BIOMISTRAL_API_KEY);
 
 function fileToGenerativePart(path, mimeType) {
   return {
@@ -28,9 +28,9 @@ export const addSymptomEntry = async (req, res) => {
     
     const imagePaths = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
 
-    // --- GEMINI AI CALL ---
-    // User requested gemini-2.5-flash, using gemini-2.5-flash as the current valid model identifier for Flash.
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // --- BioMistral AI CALL ---
+    // Using bioMistral-7b model for medical analysis
+    const model = bioMistralClient.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
       You are an expert medical AI assistant. Analyze the following symptoms and images (if provided) for a medical assessment.

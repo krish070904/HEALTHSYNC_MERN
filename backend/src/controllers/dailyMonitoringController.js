@@ -1,7 +1,7 @@
 import DailyMonitoring from "../models/DailyMonitoring.js";
 import User from "../models/User.js";
 import { generatePersonalizedDietPlan } from "./aiDietController.js";
-import { analyzeHealthTrends } from "../utils/geminiUtils.js";
+import { analyzeHealthTrends } from "../utils/aiModelUtils.js";
 
 export const createDailyMonitoring = async (req, res) => {
   try {
@@ -56,7 +56,7 @@ export const createDailyMonitoring = async (req, res) => {
 
 /**
  * Background processing for daily monitoring data
- * - Analyzes health trends with Gemini
+ * - Analyzes health trends with BioMistral AI
  * - Generates personalized diet plan
  * - Updates user context for chat personalization
  */
@@ -77,7 +77,7 @@ const processMonitoringData = async (userId, monitoringEntry) => {
       date: { $gte: sevenDaysAgo }
     }).sort({ date: -1 });
 
-    // ✅ 1. Analyze health trends with Gemini
+    // ✅ 1. Analyze health trends with BioMistral AI
     const healthAnalysis = await analyzeHealthTrends(user, recentHistory);
     console.log("✅ Health trends analyzed");
 

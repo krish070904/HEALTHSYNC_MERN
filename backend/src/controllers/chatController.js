@@ -5,15 +5,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const bioMistralClient = new GoogleGenerativeAI(process.env.BIOMISTRAL_API_KEY);
 
 export const sendMessage = async (req, res) => {
   const userMessage = req.body.text;
   const sessionId = req.body.sessionId || null;
   const userId = req.user._id;
 
-  if (!process.env.GEMINI_API_KEY) {
-    const mockReply = "I’m here to help! (Mock response – set GEMINI_API_KEY in .env)";
+  if (!process.env.BIOMISTRAL_API_KEY) {
+    const mockReply = "I'm here to help! (Mock response – set BIOMISTRAL_API_KEY in .env)";
     // Save mock chat
     let chat = await ChatHistory.findOne({ userId, sessionId });
     if (!chat) chat = new ChatHistory({ userId, sessionId, messages: [] });
@@ -45,8 +45,8 @@ export const sendMessage = async (req, res) => {
 `;
     }
 
-    // --- GEMINI AI CALL ---
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // --- BioMistral AI CALL ---
+    const model = bioMistralClient.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const systemPrompt = `
       You are an expert Indian health and nutrition assistant. Your goal is to help the user with their health and diet queries in a mature, understanding, and professional manner. You must always prioritize Indian foods only; do not suggest foreign foods like steak, burgers, or pizzas.
@@ -71,7 +71,7 @@ If the user does not require a diet update or no health condition is mentioned, 
 
 Always be polite, informative, and supportive in your conversational response. You may ask for clarification about health conditions, food preferences, or dietary restrictions if needed.
 
-**IMPORTANT:** Use the user's health context above to provide personalized responses. Reference their recent health trends, concerns, and recommendations when relevant.
+**IMPORTANT:**  Use the user's health context above to provide personalized responses. Reference their recent health trends, concerns, and recommendations when relevant.
 
 Your output must strictly follow this JSON format, with no extra formatting or markdown:
 
@@ -144,7 +144,7 @@ Be mindful of the user's health conditions, dietary preferences, and restriction
     res.json({ reply: botReply });
   } catch (err) {
     console.error("Error in sendMessage:", err);
-    const fallbackReply = "I’m here to help, but I couldn’t process your request right now. Please try again later.";
+    const fallbackReply = "I'm here to help, but I couldn't process your request right now. Please try again later.";
     // Save fallback chat
     let chat = await ChatHistory.findOne({ userId, sessionId });
     if (!chat) chat = new ChatHistory({ userId, sessionId, messages: [] });
