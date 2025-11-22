@@ -24,11 +24,34 @@ export const sendMessage = async (req, res) => {
   }
 
   try {
+    // ✅ Get user context from daily monitoring
+    const User = (await import("../models/User.js")).default;
+    const user = await User.findById(userId);
+    
+    let userContext = "";
+    if (user?.aiContext) {
+      userContext = `
+**User Health Context (from recent monitoring):**
+- Health Summary: ${user.aiContext.healthSummary || 'N/A'}
+- Active Recommendations: ${user.aiContext.recommendations?.join('; ') || 'None'}
+- Health Concerns: ${user.aiContext.concerns?.join('; ') || 'None'}
+- Last Updated: ${user.aiContext.lastUpdated ? new Date(user.aiContext.lastUpdated).toLocaleDateString() : 'N/A'}
+
+**User Profile:**
+- Age: ${user.age || 'N/A'}
+- Gender: ${user.gender || 'N/A'}
+- Disease Tags: ${user.diseaseTags?.join(', ') || 'None'}
+- Diet Type: ${user.dietType || 'Regular'}
+`;
+    }
+
     // --- GEMINI AI CALL ---
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const systemPrompt = `
       You are an expert Indian health and nutrition assistant. Your goal is to help the user with their health and diet queries in a mature, understanding, and professional manner. You must always prioritize Indian foods only; do not suggest foreign foods like steak, burgers, or pizzas.
+
+${userContext}
 
 CRITICAL INSTRUCTIONS:
 
@@ -47,6 +70,8 @@ Step-by-step cooking instructions
 If the user does not require a diet update or no health condition is mentioned, do not generate a diet plan and set "dietPlan": null.
 
 Always be polite, informative, and supportive in your conversational response. You may ask for clarification about health conditions, food preferences, or dietary restrictions if needed.
+
+**IMPORTANT:** Use the user's health context above to provide personalized responses. Reference their recent health trends, concerns, and recommendations when relevant.
 
 Your output must strictly follow this JSON format, with no extra formatting or markdown:
 
@@ -69,7 +94,7 @@ Your output must strictly follow this JSON format, with no extra formatting or m
 
 Never suggest non-Indian foods. All meals, ingredients, and recipes must be Indian-style.
 
-Be mindful of the user’s health conditions, dietary preferences, and restrictions when generating the diet plan.
+Be mindful of the user's health conditions, dietary preferences, and restrictions when generating the diet plan.
       User Message: "${userMessage}"
     `;
 

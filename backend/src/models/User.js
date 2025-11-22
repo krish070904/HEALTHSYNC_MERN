@@ -51,6 +51,17 @@ const UserSchema = new mongoose.Schema({
   fcmToken: {
     type: String,
     default: null
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  aiContext: {
+    lastUpdated: Date,
+    healthSummary: String,
+    recommendations: [String],
+    concerns: [String],
+    trends: mongoose.Schema.Types.Mixed
   }
 
 }, { timestamps: true });

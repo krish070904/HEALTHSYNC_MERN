@@ -7,11 +7,13 @@ import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 import reportRoutes from "./src/routes/reportRoutes.js";
 import reportPdfRoutes from "./src/routes/reportPdfRoutes.js";
 import medRoutes from "./src/routes/medRoutes.js";
+import dailyMonitoringRoutes from "./src/routes/dailyMonitoringRoutes.js";
 import "./src/scheduler/medReminderScheduler.js";
+import "./src/scheduler/routineAlertScheduler.js";
+import { initializeDailyMonitoringSchedulers } from "./src/schedulers/dailyMonitoringScheduler.js";
 import chatRoutes from "./src/routes/chatRoutes.js";
 import dietRoutes from "./src/routes/dietRoutes.js";
 import alertRoutes from "./src/routes/alertRoutes.js";
-import "./src/scheduler/routineAlertScheduler.js";
 import cors from "cors";
 import aiRoutes from "./src/routes/aiRoutes.js";
 
@@ -35,11 +37,14 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/report/pdf", reportPdfRoutes);
 app.use("/api/medications", medRoutes);
+app.use("/api/daily-monitoring", dailyMonitoringRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/diet", dietRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/ai", aiRoutes);
 
+// Initialize schedulers
+initializeDailyMonitoringSchedulers();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -6,11 +6,13 @@ const SymptomTrendsChart = ({ entries = [] }) => {
     date: new Date(e.createdAt).toLocaleDateString(),
     severity: e.severityScore || 0,
   }));
-  
+
   const getBarColor = (severity) => {
-    if (severity >= 70) return "#ff4d4f"; // high
-    if (severity >= 40) return "#faad14"; // medium
-    return "#52c41a"; // low
+    if (severity >= 86) return "#cf1322";     // deep red (very high)
+    if (severity >= 71) return "#ff7875";     // soft red (high)
+    if (severity >= 51) return "#fa8c16";     // orange (mid-high)
+    if (severity >= 31) return "#ffa940";     // light orange (mid-low)
+    return "#52c41a";                         // green (low)
   };
 
   return (
@@ -19,7 +21,7 @@ const SymptomTrendsChart = ({ entries = [] }) => {
         <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="severity">
+        <Bar dataKey="severity" radius={[6, 6, 0, 0]}>
           {data.map((entry, index) => (
             <Cell key={index} fill={getBarColor(entry.severity)} />
           ))}

@@ -82,3 +82,114 @@ export const generateAIDiet = async (req, res) => {
     res.status(500).json({ message: "AI meal generation failed", error: err.message });
   }
 };
+
+/**
+ * Generate personalized diet plan based on daily monitoring data
+ * Called automatically after daily monitoring submission
+ */
+export const generatePersonalizedDietPlan = async (userId, data) => {
+  try {
+    const { monitoringData, healthAnalysis, recentHistory } = data;
+    
+    const User = (await import("../models/User.js")).default;
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // Prepare context from monitoring data
+    const context = `
+**User Profile:**
+- Name: ${user.name}
+- Age: ${user.age}
+- Gender: ${user.gender}
+- Height: ${user.height} cm
+- Weight: ${user.weight} kg
+- Disease Tags: ${user.diseaseTags?.join(', ') || 'None'}
+- Diet Type: ${user.dietType}
+
+**Today's Health Data:**
+- Sleep: ${monitoringData.sleep?.hours || 0}h (quality: ${monitoringData.sleep?.quality || 0}/5)
+- Water: ${monitoringData.water?.liters || 0}L
+- Mood: ${monitoringData.mood?.score || 0}/5
+- Vitals: Sugar ${monitoringData.vitals?.sugar || 'N/A'}, BP ${monitoringData.vitals?.bpHigh || 'N/A'}/${monitoringData.vitals?.bpLow || 'N/A'}
+
+**Health Analysis:**
+${healthAnalysis?.summary || 'Health data recorded'}
+
+**Diet Focus:**
+${healthAnalysis?.dietFocus || 'Balanced nutrition'}
+`;
+
+    const prompt = `Generate a complete weekly Indian diet plan for this user.
+
+${context}
+
+Create a 7-day meal plan with:
+- Breakfast (with calories, ingredients, steps)
+- Lunch (with calories, ingredients, steps)
+- Dinner (with calories, ingredients, steps)
+
+Requirements:
+- Use Indian recipes
+- Consider diet type: ${user.dietType}
+- Address health conditions: ${user.diseaseTags?.join(', ') || 'None'}
+- Include portion sizes
+- Total daily calories should be appropriate for their profile
+- Be practical and affordable
+
+Format as JSON:
+{
+  "weekPlan": [
+    {
+      "day": "Monday",
+      "meals": [
+        {
+          "mealType": "Breakfast",
+          "recipe": "...",
+          "calories": 300,
+          "ingredients": ["..."],
+          "steps": ["..."]
+        }
+      ]
+    }
+  ]
+}
+
+Return ONLY the JSON, no additional text.`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response.text();
+    
+    // Parse response
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error("Failed to parse diet plan response");
+      return;
+    }
+    
+    const dietData = JSON.parse(jsonMatch[0]);
+    
+    // Save to database
+    const dietPlan = new DietPlan({
+      userId,
+      dailyMeals: dietData.weekPlan.map(day => ({
+        day: day.day,
+        meals: day.meals.map(meal => ({
+          ...meal,
+          image: "https://via.placeholder.com/300x200?text=Meal+Image",
+          youtubeLink: ""
+        }))
+      })),
+      generatedFrom: "daily-monitoring",
+      monitoringDate: monitoringData.date
+    });
+
+    await dietPlan.save();
+    console.log(`✅ Personalized diet plan generated for user ${userId}`);
+
+  } catch (error) {
+    console.error("Error generating personalized diet plan:", error);
+  }
+};

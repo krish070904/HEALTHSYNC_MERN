@@ -19,6 +19,8 @@ const dietPlanSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   weekNumber: { type: Number }, // optional
   dailyMeals: [dailyMealSchema],
+  generatedFrom: { type: String, default: "manual" }, // "manual" or "daily-monitoring"
+  monitoringDate: { type: Date } // Date of monitoring data used for generation
 }, {
   timestamps: true // adds createdAt & updatedAt
 });

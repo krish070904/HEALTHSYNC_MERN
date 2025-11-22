@@ -1,11 +1,13 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import AuthContext from "../contexts/AuthContext";
 import { registerUser } from "../services/authService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Register() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const registrationAttempted = useRef(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -22,6 +24,25 @@ export default function Register() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Check if user is returning from consent page
+  useEffect(() => {
+    if (
+      location.state?.consentAccepted && 
+      location.state?.registrationData &&
+      !registrationAttempted.current
+    ) {
+      // Mark that we're attempting registration
+      registrationAttempted.current = true;
+      
+      // User has accepted consent, complete registration
+      completeRegistration(location.state.registrationData);
+      
+      // Clear the location state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,30 +50,58 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    
+    // Reset registration attempted flag for new submission
+    registrationAttempted.current = false;
 
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
+    // Navigate to consent page with registration data
+    navigate("/consent", {
+      state: {
+        registrationData: form
+      }
+    });
+  };
+
+  const completeRegistration = async (registrationData) => {
+    setLoading(true);
+    setError(""); // Clear any previous errors
+    
     try {
       // Convert diseaseTags to array for backend
       const dataToSend = {
-        ...form,
-        diseaseTags: form.diseaseTags
-          ? form.diseaseTags.split(",").map((d) => d.trim())
+        ...registrationData,
+        diseaseTags: registrationData.diseaseTags
+          ? registrationData.diseaseTags.split(",").map((d) => d.trim())
           : [],
       };
       const { user, token } = await registerUser(dataToSend);
       login(user, token);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
+      setLoading(false);
+      // Reset the flag so user can try again with different data
+      registrationAttempted.current = false;
     }
   };
 
   return (
     <div className="bg-white text-gray-800 min-h-screen relative overflow-hidden">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-8 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[var(--saffron)] mx-auto mb-4"></div>
+            <p className="text-lg font-semibold">Completing Registration...</p>
+          </div>
+        </div>
+      )}
+
       {/* Background Blobs */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-[var(--saffron-light)] rounded-full opacity-50 blur-3xl"></div>
@@ -68,7 +117,16 @@ export default function Register() {
               <p className="mt-2 text-gray-600">Sign up to start your health journey.</p>
             </div>
 
-            {error && <p className="text-red-600 text-center mb-2">{error}</p>}
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-red-700 font-medium">{error}</p>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}

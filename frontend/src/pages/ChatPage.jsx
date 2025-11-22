@@ -4,7 +4,7 @@ import ChatMessage from "../components/Chat/ChatMessage";
 import ChatInput from "../components/Chat/ChatInput";
 import QuickActions from "../components/Chat/QuickAction";
 import { getChatHistory, sendMessage } from "../services/chatService.js";
-import "./ChatPageBackground.css";
+import "../styles/ChatPageBackground.css";
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([]);
