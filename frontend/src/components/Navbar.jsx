@@ -9,6 +9,7 @@ const Navbar = () => {
   const fileInputRef = useRef(null);
   const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, updateUser } = useContext(AuthContext);
 
   const toggleDropdown = () => setDropdownOpen(prev => !prev);
@@ -190,7 +191,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Icons + Menu Button */}
+          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
             <Link
               to="/notifications"
@@ -209,9 +210,139 @@ const Navbar = () => {
               }}
             ></div>
 
-            <button className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
-              <span className="material-symbols-outlined">menu</span>
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-200"
+            >
+              <span className="material-symbols-outlined">
+                {mobileMenuOpen ? "close" : "menu"}
+              </span>
             </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        <div 
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            mobileMenuOpen ? "max-h-screen opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+          }`}
+        >
+          <div className="space-y-2 px-2 pt-2 pb-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700">
+            <Link
+              to="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/dashboard"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">dashboard</span>
+                Dashboard
+              </div>
+            </Link>
+
+            <Link
+              to="/symptom-entry"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/symptom-entry"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">clinical_notes</span>
+                Symptom Tracker
+              </div>
+            </Link>
+
+            <Link
+              to="/daily-monitoring"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/daily-monitoring"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">ecg_heart</span>
+                Daily Monitoring
+              </div>
+            </Link>
+
+            <Link
+              to="/chat"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/chat"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">smart_toy</span>
+                Chatbot
+              </div>
+            </Link>
+
+            <Link
+              to="/diet-recipes"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/diet-recipes"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">restaurant_menu</span>
+                Diet Plan
+              </div>
+            </Link>
+
+            <Link
+              to="/scheduler"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                location.pathname === "/scheduler"
+                  ? "bg-primary/10 text-primary dark:text-primary-light"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">calendar_month</span>
+                Medication Schedule
+              </div>
+            </Link>
+
+            <div className="my-2 h-px bg-gray-200 dark:bg-gray-700"></div>
+
+            <button
+              onClick={() => {
+                triggerFileInput();
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">account_circle</span>
+                Change Profile Pic
+              </div>
+            </button>
+
+            <Link
+              to="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-2 text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined">logout</span>
+                Logout
+              </div>
+            </Link>
           </div>
         </div>
       </nav>

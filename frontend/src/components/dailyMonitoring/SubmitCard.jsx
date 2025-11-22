@@ -1,10 +1,10 @@
 export const SubmitCard = ({ loading, onSubmit }) => {
 return (
-<div className="mt-8">
+<div className="mt-8 flex justify-center">
 <button
 disabled={loading}
 onClick={onSubmit}
-className={`w-full bg-saffron-darker text-gray-900 font-bold py-3.5 px-6 rounded-lg text-lg hover:bg-saffron focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-saffron dark:focus:ring-offset-background-dark transition-all active:scale-[0.98] shadow-lg shadow-saffron/30 ${loading ? "opacity-60" : ""}`}
+className={`flex items-center justify-center whitespace-nowrap rounded-lg h-12 px-6 text-base font-bold bg-primary text-black hover:brightness-95 ${loading ? "opacity-60" : ""}`}
 >
 {loading ? "Saving..." : "Save Today’s Check-In"}
 </button>
