@@ -15,7 +15,9 @@ import DailyMonitoringPage from "./pages/DailyMonitoringPage";
 import DietRecipesPage from "./pages/DietRecipesPage"; 
 import NotificationsPage from "./pages/NotificationsPage";
 import ChatPage from "./pages/ChatPage";
-import MedicationScheduler from "./pages/MedicationScheduler"
+import MedicationScheduler from "./pages/MedicationScheduler";
+import MainLayout from "./components/MainLayout";
+
 function App() {
   return (
     <Router>
@@ -24,35 +26,23 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/consent" element={<Consent />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/diet-recipes"
-          element={
-            <ProtectedRoute>
-              <DietRecipesPage />
-            </ProtectedRoute>
-          }
-        />
 
+        {/* Protected Routes with Layout */}
         <Route
-          path="/notifications"
           element={
             <ProtectedRoute>
-              <NotificationsPage />
+              <MainLayout />
             </ProtectedRoute>
           }
-        />
-        <Route path="/scheduler" element={<MedicationScheduler />} />
-        <Route path="/symptom-entry" element={<SymptomEntryPage />} />
-        <Route path="/daily-monitoring" element={<DailyMonitoringPage />} />
-        <Route path="/chat" element={<ChatPage />} />
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/diet-recipes" element={<DietRecipesPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/scheduler" element={<MedicationScheduler />} />
+          <Route path="/symptom-entry" element={<SymptomEntryPage />} />
+          <Route path="/daily-monitoring" element={<DailyMonitoringPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+        </Route>
       </Routes>
     </Router>
   );

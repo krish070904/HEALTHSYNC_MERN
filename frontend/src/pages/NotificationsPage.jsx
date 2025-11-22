@@ -3,6 +3,8 @@ import NotificationFilters from "../components/Notification/NotificationFilters"
 import NotificationsList from "../components/Notification/NotificationsList";
 import api from "../services/api";
 
+import toast from "react-hot-toast";
+
 const NotificationsPage = () => {
   const [alerts, setAlerts] = useState([]);
   const [filters, setFilters] = useState({ type: "all", status: "" });
@@ -28,12 +30,21 @@ const NotificationsPage = () => {
     try {
       await Promise.all(alerts.map(a => a.status !== "resolved" ? api.put(`/alerts/${a._id}/status`, { status: "resolved" }) : null));
       setAlerts(prev => prev.map(a => ({ ...a, status: "resolved" })));
+      toast.success("All alerts marked as resolved");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to mark all as resolved");
     }
   };
 
   const filteredAlerts = alerts.filter(a => {
+    if (filters.type === "resolved") {
+      return a.status === "resolved";
+    }
+
+    // Hide resolved alerts in other tabs
+    if (a.status === "resolved") return false;
+
     let typeMatch = filters.type === "all" || a.type.toLowerCase() === filters.type;
     let statusMatch = !filters.status || a.status === filters.status;
     return typeMatch && statusMatch;
