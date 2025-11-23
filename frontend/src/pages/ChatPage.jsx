@@ -36,7 +36,7 @@ export default function ChatPage() {
   const handleClear = () => setMessages([]);
 
   return (
-    <div className="relative flex flex-col h-screen max-w-4xl mx-auto bg-white dark:bg-background-dark shadow-lg">
+    <div className="relative flex flex-col h-[100dvh] max-w-4xl mx-auto bg-white dark:bg-background-dark shadow-lg">
       <div className="bubbles">
         {[...Array(12)].map((_, i) => (
           <div
