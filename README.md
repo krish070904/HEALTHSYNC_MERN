@@ -1,14 +1,3 @@
-# 🏥 HealthSync - AI-Powered Health Management System
-
-<div align="center">
-
-![HealthSync Banner](https://img.shields.io/badge/HealthSync-AI%20Health%20Platform-orange?style=for-the-badge)
-[![MERN Stack](https://img.shields.io/badge/Stack-MERN-green?style=for-the-badge)](https://www.mongodb.com/mern-stack)
-[![License](https://img.shields.io/badge/License-Academic-blue?style=for-the-badge)](LICENSE)
-
-**A comprehensive health monitoring and management platform powered by AI**
-
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [API Documentation](#-api-documentation)
 
 </div>
 
