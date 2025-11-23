@@ -1,6 +1,5 @@
 console.log("Dashboard routes loaded!");
 
-
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { getUserDashboard } from "../controllers/dashboardController.js";

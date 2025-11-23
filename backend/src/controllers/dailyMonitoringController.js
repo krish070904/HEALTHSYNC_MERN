@@ -6,8 +6,6 @@ import { analyzeHealthTrends } from "../utils/aiModelUtils.js";
 export const createDailyMonitoring = async (req, res) => {
   try {
     const userId = req.user._id;
-
-    // Check if entry already exists for today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -25,7 +23,6 @@ export const createDailyMonitoring = async (req, res) => {
       });
     }
 
-    // Create new entry
     const entry = new DailyMonitoring({
       userId,
       date: req.body.date || new Date(),
@@ -38,37 +35,22 @@ export const createDailyMonitoring = async (req, res) => {
     });
 
     const saved = await entry.save();
-
-    // ✅ TRIGGER AI ANALYSIS & DIET GENERATION IN BACKGROUND
-    processMonitoringData(userId, saved).catch(err => {
-      console.error("Background processing error:", err);
-    });
+    processMonitoringData(userId, saved).catch(err => console.error("Background processing error:", err));
 
     res.status(201).json({
       message: "Daily monitoring saved successfully! AI analysis in progress...",
       data: saved
     });
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-/**
- * Background processing for daily monitoring data
- * - Analyzes health trends with BioMistral AI
- * - Generates personalized diet plan
- * - Updates user context for chat personalization
- */
 const processMonitoringData = async (userId, monitoringEntry) => {
   try {
-    console.log(`🤖 Processing daily monitoring for user ${userId}`);
-
-    // Get user data
     const user = await User.findById(userId);
     if (!user) return;
 
-    // Get last 7 days of monitoring data for trend analysis
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -77,36 +59,24 @@ const processMonitoringData = async (userId, monitoringEntry) => {
       date: { $gte: sevenDaysAgo }
     }).sort({ date: -1 });
 
-    // ✅ 1. Analyze health trends with BioMistral AI
     const healthAnalysis = await analyzeHealthTrends(user, recentHistory);
-    console.log("✅ Health trends analyzed");
-
-    // ✅ 2. Generate personalized diet plan based on monitoring data
     await generatePersonalizedDietPlan(userId, {
       monitoringData: monitoringEntry,
       healthAnalysis,
       recentHistory
     });
-    console.log("✅ Diet plan generated");
 
-    // ✅ 3. Update user's AI context for personalized chat
     await updateUserAIContext(userId, healthAnalysis);
-    console.log("✅ User AI context updated");
-
   } catch (error) {
     console.error("Error in background processing:", error);
   }
 };
 
-/**
- * Update user's AI context for personalized chat responses
- */
 const updateUserAIContext = async (userId, healthAnalysis) => {
   try {
     const user = await User.findById(userId);
     if (!user) return;
 
-    // Store AI context in user document (you may need to add this field to User model)
     user.aiContext = {
       lastUpdated: new Date(),
       healthSummary: healthAnalysis.summary,
@@ -130,11 +100,7 @@ export const getDailyMonitoringHistory = async (req, res) => {
       .sort({ date: -1 })
       .limit(limit);
 
-    res.json({
-      message: "Daily monitoring history fetched successfully",
-      data: history
-    });
-
+    res.json({ message: "Daily monitoring history fetched successfully", data: history });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -145,7 +111,6 @@ export const getTodayMonitoring = async (req, res) => {
     const userId = req.user._id;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -159,20 +124,15 @@ export const getTodayMonitoring = async (req, res) => {
       data: todayEntry,
       hasSubmittedToday: !!todayEntry
     });
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-/**
- * Get health insights based on monitoring history
- */
 export const getHealthInsights = async (req, res) => {
   try {
     const userId = req.user._id;
     const days = parseInt(req.query.days) || 7;
-
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
@@ -181,14 +141,10 @@ export const getHealthInsights = async (req, res) => {
       date: { $gte: startDate }
     }).sort({ date: -1 });
 
-    if (history.length === 0) {
-      return res.json({
-        message: "No monitoring data available",
-        insights: null
-      });
+    if (!history.length) {
+      return res.json({ message: "No monitoring data available", insights: null });
     }
 
-    // Calculate insights
     const insights = {
       averageSleep: calculateAverage(history, 'sleep.hours'),
       averageWater: calculateAverage(history, 'water.liters'),
@@ -199,53 +155,36 @@ export const getHealthInsights = async (req, res) => {
       totalDays: history.length
     };
 
-    res.json({
-      message: "Health insights generated successfully",
-      insights,
-      period: `${days} days`
-    });
-
+    res.json({ message: "Health insights generated successfully", insights, period: `${days} days` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Helper functions
 const calculateAverage = (history, field) => {
   const values = history
-    .map(entry => {
-      const keys = field.split('.');
-      let value = entry;
-      for (const key of keys) {
-        value = value?.[key];
-      }
-      return value;
-    })
+    .map(entry => field.split('.').reduce((acc, key) => acc?.[key], entry))
     .filter(val => val != null && !isNaN(val));
 
-  if (values.length === 0) return 0;
+  if (!values.length) return 0;
   return (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
 };
 
 const calculateMealConsistency = (history) => {
-  let totalMeals = 0;
-  let possibleMeals = history.length * 3; // breakfast, lunch, dinner
+  const totalMeals = history.reduce((count, entry) => {
+    count += entry.meals?.breakfast ? 1 : 0;
+    count += entry.meals?.lunch ? 1 : 0;
+    count += entry.meals?.dinner ? 1 : 0;
+    return count;
+  }, 0);
 
-  history.forEach(entry => {
-    if (entry.meals?.breakfast) totalMeals++;
-    if (entry.meals?.lunch) totalMeals++;
-    if (entry.meals?.dinner) totalMeals++;
-  });
-
+  const possibleMeals = history.length * 3;
   return ((totalMeals / possibleMeals) * 100).toFixed(1);
 };
 
 const calculateVitalsTrends = (history) => {
-  const vitals = history
-    .filter(entry => entry.vitals)
-    .map(entry => entry.vitals);
-
-  if (vitals.length === 0) return null;
+  const vitalsEntries = history.filter(entry => entry.vitals);
+  if (!vitalsEntries.length) return null;
 
   return {
     avgSugar: calculateAverage(history, 'vitals.sugar'),

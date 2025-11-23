@@ -1,8 +1,6 @@
-// /src/utils/notificationUtils.js
 import nodemailer from "nodemailer";
 import twilio from "twilio";
 
-// --- EMAIL SETUP (SMTP/Nodemailer) ---
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -17,7 +15,7 @@ export const sendEmail = async (alert) => {
   try {
     await transporter.sendMail({
       from: `"Healthsync Alerts" <${process.env.SMTP_USER}>`,
-      to: alert.userEmail, // You can pass user email to alert or fetch from DB
+      to: alert.userEmail,
       subject: `[${alert.type.toUpperCase()}] Health Alert`,
       text: `${alert.message}\nSeverity: ${alert.severity}`,
     });
@@ -31,7 +29,7 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 
 export const sendSMS = async (alert) => {
   try {
-    if (!alert.userPhone) return; // skip if no phone
+    if (!alert.userPhone) return;
     await twilioClient.messages.create({
       body: `${alert.type.toUpperCase()} Alert: ${alert.message} (Severity: ${alert.severity})`,
       from: process.env.TWILIO_PHONE,
@@ -43,10 +41,8 @@ export const sendSMS = async (alert) => {
   }
 };
 
-// --- APP PUSH NOTIFICATION (Web Push or Frontend) ---
 export const sendPush = async (alert) => {
   try {
-    // For simplicity, we'll just log it. You can integrate FCM or Web Push API later
     console.log("App Push Notification:", alert.message);
   } catch (err) {
     console.error("Push notification error:", err);

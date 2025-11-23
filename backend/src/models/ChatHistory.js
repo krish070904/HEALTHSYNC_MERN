@@ -8,15 +8,11 @@ const messageSchema = new mongoose.Schema({
 
 const chatHistorySchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    messages: [messageSchema],
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    messages: { type: [messageSchema], default: [] },
     sessionId: { type: String },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("ChatHistory", chatHistorySchema);
+export default mongoose.models.ChatHistory || mongoose.model("ChatHistory", chatHistorySchema);

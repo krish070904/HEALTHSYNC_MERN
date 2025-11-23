@@ -2,15 +2,12 @@ import cron from "node-cron";
 import User from "../models/User.js";
 import { createAlertInDB, sendNotification } from "../controllers/alertController.js";
 
-// Run every day at 8 AM
 cron.schedule("0 8 * * *", async () => {
   try {
     console.log("Running routine health checks...");
 
-    const users = await User.find({}); // Fetch all users
-
+    const users = await User.find({});
     for (const user of users) {
-      // Use the correct helper function
       const alert = await createAlertInDB(
         user._id,
         "routineCheck",

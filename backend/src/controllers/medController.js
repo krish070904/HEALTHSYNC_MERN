@@ -1,12 +1,13 @@
 import MedSchedule from "../models/MedSchedule.js";
-import { createAlertInDB, sendNotification } from "./alertController.js"; // <-- updated
+import { createAlertInDB, sendNotification } from "./alertController.js";
 
 export const checkMissedDoses = async () => {
   const meds = await MedSchedule.find({});
   const now = new Date();
 
   for (const med of meds) {
-    const today = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const today = now.toISOString().slice(0, 10);
+
     med.times.forEach(async (time) => {
       const doseDateTime = new Date(`${today}T${time}:00`);
       if (now > doseDateTime) {
@@ -55,17 +56,10 @@ export const addMedicationSchedule = async (userId, data) => {
 
 export const getUserMedications = async (userId) => {
   const now = new Date();
-  return await MedSchedule.find({ userId, endDate: { $gte: now } }).sort({
-    startDate: 1,
-  });
+  return await MedSchedule.find({ userId, endDate: { $gte: now } }).sort({ startDate: 1 });
 };
 
-export const updateMedicationAdherence = async (
-  userId,
-  medId,
-  date,
-  status
-) => {
+export const updateMedicationAdherence = async (userId, medId, date, status) => {
   if (!["taken", "skipped"].includes(status)) {
     throw new Error("Status must be 'taken' or 'skipped'");
   }
@@ -74,7 +68,6 @@ export const updateMedicationAdherence = async (
   if (!med) throw new Error("Medication schedule not found");
 
   const targetDate = new Date(date).toDateString();
-
   if (new Date(date) < med.startDate || new Date(date) > med.endDate) {
     throw new Error("Date is outside of medication schedule");
   }

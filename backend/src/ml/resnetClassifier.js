@@ -1,15 +1,5 @@
-/**
- * @module ResNetClassifier
- * @version 2.0.0
- * @author HealthSync Medical AI Team
- */
-
 import axios from "axios";
 import fs from "fs";
-
-// ========================================
-// CONFIGURATION
-// ========================================
 
 const HUGGINGFACE_CONFIG = {
   apiKey: process.env.HF_API_KEY,
@@ -41,10 +31,6 @@ const SEVERITY_THRESHOLDS = {
   UNCERTAIN: 0.40,
 };
 
-// ========================================
-// CORE CLASSIFIER
-// ========================================
-
 class ResNetMedicalClassifier {
   constructor() {
     this.modelLoaded = false;
@@ -54,34 +40,26 @@ class ResNetMedicalClassifier {
   }
 
   async initialize() {
+    if (!HUGGINGFACE_CONFIG.apiKey) throw new Error("HuggingFace API key not configured");
+
     try {
-      if (!HUGGINGFACE_CONFIG.apiKey) {
-        throw new Error("HuggingFace API key not configured");
-      }
-
-      console.log("🔬 Initializing ResNet-50 Medical Classifier...");
-
       const testResponse = await axios.get(HUGGINGFACE_CONFIG.modelEndpoint, {
         headers: { Authorization: `Bearer ${HUGGINGFACE_CONFIG.apiKey}` },
         timeout: 5000,
       });
 
       this.modelLoaded = true;
-      console.log("✅ ResNet-50 model loaded successfully");
       return { success: true, status: "ready" };
     } catch (error) {
-      console.error("❌ ResNet model initialization failed:", error.message);
       return { success: false, error: error.message };
     }
   }
 
   async classifyImage(imagePath, options = {}) {
-    try {
-      const cacheKey = `${imagePath}-${JSON.stringify(options)}`;
-      if (this.cache.has(cacheKey)) {
-        return this.cache.get(cacheKey);
-      }
+    const cacheKey = `${imagePath}-${JSON.stringify(options)}`;
+    if (this.cache.has(cacheKey)) return this.cache.get(cacheKey);
 
+    try {
       const imageBuffer = fs.readFileSync(imagePath);
       const response = await this._callResNetAPI(imageBuffer, options);
       const processedResults = this._processClassificationResults(response.data);
@@ -131,14 +109,13 @@ class ResNetMedicalClassifier {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const response = await axios.post(HUGGINGFACE_CONFIG.modelEndpoint, imageBuffer, {
+        return await axios.post(HUGGINGFACE_CONFIG.modelEndpoint, imageBuffer, {
           headers: {
             Authorization: `Bearer ${HUGGINGFACE_CONFIG.apiKey}`,
             "Content-Type": "application/octet-stream",
           },
           timeout: HUGGINGFACE_CONFIG.timeout,
         });
-        return response;
       } catch (error) {
         lastError = error;
         if (attempt < maxRetries) await this._sleep(HUGGINGFACE_CONFIG.retryDelay * attempt);
@@ -173,12 +150,9 @@ class ResNetMedicalClassifier {
   }
 
   _assessSeverity(confidence) {
-    if (confidence >= SEVERITY_THRESHOLDS.HIGH)
-      return { level: "HIGH", emoji: "🔴", recommendation: "Immediate medical consultation recommended", urgency: 3 };
-    if (confidence >= SEVERITY_THRESHOLDS.MEDIUM)
-      return { level: "MEDIUM", emoji: "🟡", recommendation: "Schedule a doctor's appointment", urgency: 2 };
-    if (confidence >= SEVERITY_THRESHOLDS.LOW)
-      return { level: "LOW", emoji: "🟢", recommendation: "Monitor condition, self-care may be sufficient", urgency: 1 };
+    if (confidence >= SEVERITY_THRESHOLDS.HIGH) return { level: "HIGH", emoji: "🔴", recommendation: "Immediate medical consultation recommended", urgency: 3 };
+    if (confidence >= SEVERITY_THRESHOLDS.MEDIUM) return { level: "MEDIUM", emoji: "🟡", recommendation: "Schedule a doctor's appointment", urgency: 2 };
+    if (confidence >= SEVERITY_THRESHOLDS.LOW) return { level: "LOW", emoji: "🟢", recommendation: "Monitor condition, self-care may be sufficient", urgency: 1 };
     return { level: "UNCERTAIN", emoji: "❓", recommendation: "Insufficient data for assessment", urgency: 0 };
   }
 
@@ -204,7 +178,6 @@ class ResNetMedicalClassifier {
 
   _generateRecommendations(topPrediction, medicalFindings) {
     const recommendations = [];
-
     if (topPrediction.severityLevel.urgency >= 2)
       recommendations.push({ priority: "HIGH", action: "Consult a healthcare professional", reason: `Detected ${topPrediction.medicalCategory} with ${topPrediction.confidencePercent} confidence` });
 
@@ -221,9 +194,7 @@ class ResNetMedicalClassifier {
 
     const avg = results.slice(0, 3).reduce((sum, r) => sum + r.confidence, 0) / Math.min(3, results.length);
     const percentage = (avg * 100).toFixed(2) + "%";
-    let qualityRating = "Low";
-    if (avg > 0.7) qualityRating = "High";
-    else if (avg > 0.4) qualityRating = "Medium";
+    let qualityRating = avg > 0.7 ? "High" : avg > 0.4 ? "Medium" : "Low";
     return { score: avg, percentage, qualityRating };
   }
 
@@ -247,20 +218,11 @@ class ResNetMedicalClassifier {
   clearCache() {
     const sizeBefore = this.cache.size;
     this.cache.clear();
-    console.log(`🗑️ Cleared ${sizeBefore} cached results`);
     return { cleared: sizeBefore };
   }
 }
 
-// ========================================
-// SINGLETON INSTANCE
-// ========================================
-
 const resnetClassifier = new ResNetMedicalClassifier();
-
-// ========================================
-// EXPORT FUNCTIONS
-// ========================================
 
 export const analyzeImage = async (imagePath, options = {}) => {
   if (!resnetClassifier.modelLoaded) await resnetClassifier.initialize();

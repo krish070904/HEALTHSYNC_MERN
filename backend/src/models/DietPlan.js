@@ -5,26 +5,25 @@ const mealSchema = new mongoose.Schema({
   recipe: { type: String, required: true },
   calories: { type: Number, default: 0 },
   image: { type: String },
-  ingredients: [{ type: String }],
-  steps: [{ type: String }],
-  youtubeLink: { type: String }
+  ingredients: { type: [String], default: [] },
+  steps: { type: [String], default: [] },
+  youtubeLink: { type: String },
 });
 
 const dailyMealSchema = new mongoose.Schema({
-  day: { type: String, required: true }, // Monday, Tuesday, etc.
-  meals: [mealSchema]
+  day: { type: String, required: true },
+  meals: { type: [mealSchema], default: [] },
 });
 
-const dietPlanSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  weekNumber: { type: Number }, // optional
-  dailyMeals: [dailyMealSchema],
-  generatedFrom: { type: String, default: "manual" }, // "manual" or "daily-monitoring"
-  monitoringDate: { type: Date } // Date of monitoring data used for generation
-}, {
-  timestamps: true // adds createdAt & updatedAt
-});
+const dietPlanSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    weekNumber: { type: Number },
+    dailyMeals: { type: [dailyMealSchema], default: [] },
+    generatedFrom: { type: String, default: "manual" },
+    monitoringDate: { type: Date },
+  },
+  { timestamps: true }
+);
 
-const DietPlan = mongoose.model("DietPlan", dietPlanSchema);
-
-export default DietPlan;
+export default mongoose.models.DietPlan || mongoose.model("DietPlan", dietPlanSchema);

@@ -7,35 +7,22 @@ import path from "path";
 import { fileURLToPath } from 'url';
 
 const router = express.Router();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Multer setup for profile images
-// Go up two levels from src/routes to get to root, then into uploads/profiles
 const uploadDir = path.join(__dirname, "../../uploads/profiles");
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `profile-${req.user._id}-${Date.now()}${path.extname(file.originalname)}`);
-    }
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, `profile-${req.user._id}-${Date.now()}${path.extname(file.originalname)}`),
 });
 
 const upload = multer({ storage });
 
 router.post("/register", registerUser);
-
 router.post("/login", loginUser);
-
 router.get("/me", authMiddleware, getMe);
-
 router.put("/update-profile-image", authMiddleware, upload.single("image"), updateProfileImage);
 
 export default router;

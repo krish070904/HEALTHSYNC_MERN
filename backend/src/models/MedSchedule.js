@@ -1,4 +1,3 @@
-// /src/models/MedSchedule.js
 import mongoose from "mongoose";
 
 const adherenceSchema = new mongoose.Schema({

@@ -6,9 +6,7 @@ import { createAlertInDB } from "../controllers/alertController.js";
 
 const hasReminderBeenSent = (med, now) => {
   const todayStr = now.toDateString();
-  return med.adherenceLog?.some(
-    (log) => log.date.toDateString() === todayStr && log.status === "taken"
-  );
+  return med.adherenceLog?.some(log => log.date.toDateString() === todayStr && log.status === "taken");
 };
 
 const logMedAlert = async (med, userId, now) => {
@@ -30,37 +28,26 @@ cron.schedule("* * * * *", async () => {
     const now = new Date();
     const timeNow = now.toTimeString().slice(0, 5);
 
-    const meds = await MedSchedule.find({
-      startDate: { $lte: now },
-      endDate: { $gte: now },
-    });
+    const meds = await MedSchedule.find({ startDate: { $lte: now }, endDate: { $gte: now } });
 
     for (const med of meds) {
-      if (med.times.includes(timeNow)) {
-        if (!hasReminderBeenSent(med, now)) {
-          const user = await User.findById(med.userId);
-          if (!user || !user.email) {
-            console.log(`User not found or missing email for med: ${med.medName}`);
-            continue;
-          }
+      if (med.times.includes(timeNow) && !hasReminderBeenSent(med, now)) {
+        const user = await User.findById(med.userId);
+        if (!user || !user.email) continue;
 
-          // Use the centralized alert system
-          try {
-            await createAlertInDB(
-              user._id,
-              "medication",
-              50,
-              `Time to take your medicine: ${med.medName}. Dosage: ${med.dosage}`,
-              ["email", "sms", "app"]
-            );
+        try {
+          await createAlertInDB(
+            user._id,
+            "medication",
+            50,
+            `Time to take your medicine: ${med.medName}. Dosage: ${med.dosage}`,
+            ["email", "sms", "app"]
+          );
 
-            // Log to MedAlert for tracking
-            await logMedAlert(med, user._id, now);
-
-            console.log(`[${now.toLocaleString()}] Reminder sent for ${med.medName} to ${user.email}`);
-          } catch (alertErr) {
-            console.error(`Error sending alert for ${med.medName}:`, alertErr);
-          }
+          await logMedAlert(med, user._id, now);
+          console.log(`[${now.toLocaleString()}] Reminder sent for ${med.medName} to ${user.email}`);
+        } catch (alertErr) {
+          console.error(`Error sending alert for ${med.medName}:`, alertErr);
         }
       }
     }
