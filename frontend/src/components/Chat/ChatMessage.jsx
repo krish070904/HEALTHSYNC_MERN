@@ -15,16 +15,20 @@ export default function ChatMessage({ message }) {
           }}
         />
       )}
-      <div className="flex flex-col gap-1 items-start">
-          <div className={`text-sm font-normal flex max-w-md px-4 py-3 rounded-t-xl ${
-            isUser ? "bg-user-message-bg rounded-bl-xl" : "bg-ai-message-bg rounded-br-xl"
-          }`}>
-            {isUser ? (
-              message.text
-            ) : (
+      <div className={`flex flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
+        <div 
+          className={`relative px-4 py-2 shadow-sm max-w-[85%] sm:max-w-md break-words text-sm leading-relaxed ${
+            isUser 
+              ? "bg-[#d9fdd3] text-gray-900 rounded-l-lg rounded-tr-lg rounded-br-none" 
+              : "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-r-lg rounded-tl-lg rounded-bl-none border border-gray-100 dark:border-gray-700"
+          }`}
+        >
+          {isUser ? (
+            message.text
+          ) : (
+            <div className="markdown-content space-y-2">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
-                className="markdown-content space-y-2"
                 components={{
                   ul: ({node, ...props}) => <ul className="list-disc pl-4 space-y-1" {...props} />,
                   ol: ({node, ...props}) => <ol className="list-decimal pl-4 space-y-1" {...props} />,
@@ -33,16 +37,22 @@ export default function ChatMessage({ message }) {
                   h2: ({node, ...props}) => <h2 className="text-base font-bold mt-2 mb-1" {...props} />,
                   h3: ({node, ...props}) => <h3 className="text-sm font-bold mt-1" {...props} />,
                   strong: ({node, ...props}) => <strong className="font-bold text-gray-900 dark:text-gray-100" {...props} />,
-                  p: ({node, ...props}) => <p className="leading-relaxed" {...props} />,
+                  p: ({node, ...props}) => <p className="leading-relaxed mb-1" {...props} />,
+                  code: ({node, inline, className, children, ...props}) => (
+                    <code className={`${inline ? "bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-xs" : "block bg-gray-100 dark:bg-gray-700 p-2 rounded text-xs overflow-x-auto"}`} {...props}>
+                      {children}
+                    </code>
+                  ),
                 }}
               >
                 {message.text}
               </ReactMarkdown>
-            )}
-          </div>
-        <p className="text-xs text-gray-400 dark:text-gray-500 px-1">
-          {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-        </p>
+            </div>
+          )}
+          <span className={`block text-[10px] mt-1 text-right ${isUser ? "text-gray-500" : "text-gray-400"}`}>
+            {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        </div>
       </div>
     </div>
   );
