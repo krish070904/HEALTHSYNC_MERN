@@ -26,7 +26,24 @@ const app = express();
 app.use(express.json());
 connectDB();
 app.use("/uploads", express.static("uploads"));
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
+// CORS Configuration
+const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
+// Root Route
+app.get("/", (req, res) => {
+  res.send("HealthSync Backend is Running!");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/symptoms", symptomRoutes);
