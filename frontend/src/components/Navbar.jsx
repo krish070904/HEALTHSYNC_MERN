@@ -27,7 +27,8 @@ const Navbar = () => {
   const getProfileImageUrl = (path) => {
     if (!path) return "https://lh3.googleusercontent.com/aida-public/AB6AXuCq7A7u_bex9FXa_-2s4tWovTclbrwcYKJsTUI4Y5fxd-hLOcXD8fhMAU6QyCv5QYR9FxMaLmO3tIyGouDjwIfr_a8GV-kWzCQWTjH7frTqPGRMa4rsidUWZfGl-I89qb57vrvbpisv9GY3xxt4oJE-bvhrmWP0dxCiaD-LdFB1yi1iRb_ToRi6SXEQSMt7SomcbxxfMt2WMo0mbMadtn56z1HhlATgYSoHXUXoq7iib3ubN4AE77nj8uuGW7blxohvOh9FvFdjI-rB";
     if (path.startsWith("http")) return path;
-    return `http://localhost:5000${path}`;
+    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    return `${baseUrl}${path}`;
   };
 
   const [profileImage, setProfileImage] = useState(getProfileImageUrl(user?.profileImage));
