@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import api from "../services/api"; // your backend api
+import api from "../services/api";
 
 const AIModal = ({ onClose, onGenerate }) => {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if (!query.trim()) return;
     setLoading(true);
     try {
-      // call backend to get AI-generated meals
-      const res = await api.post("/ai/generate", { query });
-      // returns [{ recipe, image, calories, protein, steps, ingredients, youtube }]
-      onGenerate(res.data);
+      const response = await api.post("/ai/generate", { query });
+      onGenerate(response.data); // expects [{ recipe, image, calories, protein, steps, ingredients, youtube }]
       onClose();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate meals. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -22,7 +22,7 @@ const AIModal = ({ onClose, onGenerate }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white dark:bg-background-dark rounded-lg shadow-lg w-96 p-4">
+      <div className="bg-white dark:bg-background-dark rounded-lg shadow-lg w-96 p-4 relative">
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
           onClick={onClose}
@@ -38,9 +38,9 @@ const AIModal = ({ onClose, onGenerate }) => {
           placeholder="I want Indian vegetarian meals..."
         />
         <button
-          className="bg-primary text-white px-4 py-2 rounded w-full"
+          className="bg-primary text-white px-4 py-2 rounded w-full disabled:opacity-50"
           onClick={handleSubmit}
-          disabled={loading}
+          disabled={loading || !query.trim()}
         >
           {loading ? "Generating..." : "Generate Meals"}
         </button>

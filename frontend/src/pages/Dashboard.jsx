@@ -6,7 +6,8 @@ import MedScheduleCard from "../components/Dashboard/MedicationCard";
 import DietCard from "../components/Dashboard/DietCard";
 import ReportsCard from "../components/Dashboard/ReportsCard";
 import SymptomTrendsChart from "../components/Dashboard/SymptomTrendsChart";
-import sthethoscope from "../assets/DashboardAssets/stethoscope_6467872.png"
+import sthethoscope from "../assets/DashboardAssets/stethoscope_6467872.png";
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -21,15 +22,8 @@ const Dashboard = () => {
 
   const fetchData = async (isRefresh = false) => {
     try {
-      if (isRefresh) {
-        setRefreshing(true);
-        console.log("Manual refresh triggered...");
-      } else {
-        console.log("Fetching dashboard data...");
-      }
+      if (isRefresh) setRefreshing(true);
       const dashboardData = await getDashboardData();
-      console.log("Dashboard data received:", dashboardData);
-      console.log("Medications in dashboard:", dashboardData.medSchedule);
       setData(dashboardData);
       setError("");
     } catch (err) {
@@ -44,22 +38,15 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Refetch data when user navigates back to dashboard
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        console.log("Page became visible, refreshing dashboard...");
-        fetchData(true);
-      }
+      if (!document.hidden) fetchData(true);
     };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  const handleManualRefresh = () => {
-    fetchData(true);
-  };
+  const handleManualRefresh = () => fetchData(true);
 
   if (loading) return <div className="p-6">Loading dashboard...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
@@ -85,11 +72,10 @@ const Dashboard = () => {
       </header>
 
       <main className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-        {/* Symptom Trends Chart */}
         <div className="w-full lg:col-span-2 xl:col-span-2 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
           <div className="p-6 border-b border-border-light flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <img src={sthethoscope} alt="Pill" className="w-5 h-5" />
+              <img src={sthethoscope} alt="Stethoscope" className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-text-light dark:text-text-dark">Symptom Trends</h2>
           </div>
@@ -98,16 +84,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Alerts */}
         <AlertCard alerts={data.alerts} />
-
-        {/* Medications */}
         <MedScheduleCard meds={data.medSchedule} />
-
-        {/* Diet */}
         <DietCard diet={data.dietPlan} />
-
-        {/* Reports */}
         <ReportsCard />
       </main>
     </div>

@@ -1,27 +1,20 @@
-/* SymptomEntryPage.css */
-
-/* Base textarea fix */
 textarea {
   field-sizing: content;
   resize: none;
 }
 
-/* Custom font family */
 body, .font-display {
   font-family: 'Manrope', sans-serif;
 }
 
-/* Custom border radius for consistency */
 .rounded-DEFAULT {
-  border-radius: 1rem; /* 16px */
+  border-radius: 1rem;
 }
 
-/* Soft shadow */
 .shadow-soft {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
 }
 
-/* Custom colors (optional, can be used with Tailwind or inline) */
 .bg-background-light {
   background-color: #F8F7F4;
 }
@@ -38,12 +31,10 @@ body, .font-display {
   color: #666666;
 }
 
-/* Tailwind-compatible border-light */
 .border-border-light {
   border-color: #EEEEEE;
 }
 
-/* Primary brand colors */
 .text-primary-darker {
   color: #E6A937;
 }
@@ -64,17 +55,14 @@ body, .font-display {
   box-shadow: 0 0 0 2px rgba(230,169,55,0.5);
 }
 
-/* Upload icon inside dashed box */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
 
-/* Hide scrollbars on textarea for cleaner UI */
 textarea::-webkit-scrollbar {
   display: none;
 }
 
-/* Prose styling for symptom preview */
 .prose-sm p {
   margin: 0;
 }

@@ -6,25 +6,23 @@ const AIBox = ({ onClose, setRecipes }) => {
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
+    if (!query.trim()) return;
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
+      const response = await axios.post(
         "http://localhost:5000/ai/generate",
         { query },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setRecipes(res.data); // update main recipes grid
+      setRecipes(response.data);
       onClose();
-    } catch (err) {
-      console.error(err);
-      alert("AI generation failed");
+    } catch (error) {
+      console.error(error);
+      alert("AI generation failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -40,12 +38,15 @@ const AIBox = ({ onClose, setRecipes }) => {
         />
         <button
           onClick={handleGenerate}
-          className="bg-primary text-white px-4 py-2 rounded w-full"
-          disabled={loading}
+          disabled={loading || !query.trim()}
+          className="bg-primary text-white px-4 py-2 rounded w-full disabled:opacity-50"
         >
           {loading ? "Generating..." : "Generate"}
         </button>
-        <button onClick={onClose} className="mt-2 text-gray-500 w-full">
+        <button
+          onClick={onClose}
+          className="mt-2 text-gray-500 w-full hover:underline"
+        >
           Cancel
         </button>
       </div>

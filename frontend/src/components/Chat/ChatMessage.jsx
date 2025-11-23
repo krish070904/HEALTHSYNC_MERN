@@ -5,7 +5,6 @@ export default function ChatMessage({ message }) {
 
   return (
     <div className={`flex items-end gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
-      {/* AI Avatar */}
       {!isUser && (
         <div
           className="w-10 h-10 shrink-0 rounded-full bg-center bg-cover bg-no-repeat"
@@ -14,8 +13,6 @@ export default function ChatMessage({ message }) {
           }}
         />
       )}
-
-      {/* Message Bubble */}
       <div className="flex flex-col gap-1 items-start">
         <p
           className={`text-sm font-normal flex max-w-md px-4 py-3 rounded-t-xl ${

@@ -25,7 +25,10 @@ export default function ChatInput({ onSend }) {
       <button className="flex-shrink-0 flex items-center justify-center size-10 rounded-full text-gray-500 hover:bg-gray-100 transition-colors">
         <span className="material-symbols-outlined text-2xl">mic</span>
       </button>
-      <button onClick={handleSend} className="flex-shrink-0 flex items-center justify-center size-10 rounded-full bg-primary text-[#181511] hover:opacity-90 transition-opacity">
+      <button
+        onClick={handleSend}
+        className="flex-shrink-0 flex items-center justify-center size-10 rounded-full bg-primary text-[#181511] hover:opacity-90 transition-opacity"
+      >
         <span className="material-symbols-outlined text-2xl">send</span>
       </button>
     </div>

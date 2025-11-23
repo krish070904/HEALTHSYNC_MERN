@@ -10,12 +10,9 @@ const severityColors = {
 
 const ResultCard = ({ result }) => {
   if (!result) return null;
-  
-  // Backend returns severity_level, fallback to low if missing
+
   const severity = result?.severity_level || "low";
   const condition = result?.predicted_condition || "Unknown Condition";
-  
-  // Backend returns images array, take the first one if available
   const imageUrl = result.images && result.images.length > 0 
     ? `http://localhost:5000/${result.images[0]}` 
     : null;
@@ -40,12 +37,12 @@ const ResultCard = ({ result }) => {
 
       <div className="mt-4">
         <h3 className="font-semibold">Detected Condition:</h3>
-        <p>{result.predicted_condition}</p>
+        <p>{condition}</p>
       </div>
 
-      {result.image_url && (
+      {imageUrl && (
         <img
-          src={result.image_url}
+          src={imageUrl}
           alt="Symptom"
           className="mt-4 w-full rounded-lg border shadow-sm"
         />

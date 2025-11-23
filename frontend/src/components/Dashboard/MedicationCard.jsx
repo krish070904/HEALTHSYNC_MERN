@@ -1,13 +1,9 @@
 import React from "react";
-import PillIcon from "../../assets/DashboardAssets/pill_8064036.png"; // adjust path if needed
+import PillIcon from "../../assets/DashboardAssets/pill_8064036.png";
 
 const MedicationCard = ({ meds }) => {
   const safeMeds = Array.isArray(meds) ? meds : [];
-  
-  console.log("MedicationCard received meds:", meds);
-  console.log("SafeMeds array:", safeMeds);
 
-  // Get status color styling similar to AlertsCard
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "taken":
@@ -21,7 +17,6 @@ const MedicationCard = ({ meds }) => {
     }
   };
 
-  // Get status icon
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
       case "taken":
@@ -35,19 +30,18 @@ const MedicationCard = ({ meds }) => {
     }
   };
 
-  // Format time array to display
   const formatTimes = (times) => {
     if (!times || times.length === 0) return "No time set";
-    return times.map(time => {
-      // Handle both "HH:MM:SS" and "HH:MM" formats
-      const timeParts = time.split(":");
-      return `${timeParts[0]}:${timeParts[1]}`;
-    }).join(", ");
+    return times
+      .map((time) => {
+        const [hour, minute] = time.split(":");
+        return `${hour}:${minute}`;
+      })
+      .join(", ");
   };
 
   return (
     <div className="w-full lg:col-span-1 xl:col-span-2 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
-      {/* Header */}
       <div className="p-6 border-b border-border-light flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
@@ -62,7 +56,6 @@ const MedicationCard = ({ meds }) => {
         </span>
       </div>
 
-      {/* Body */}
       <div className="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
         {safeMeds.length === 0 ? (
           <p className="text-subtle-light dark:text-subtle-dark text-center py-4">
@@ -78,9 +71,7 @@ const MedicationCard = ({ meds }) => {
                 {getStatusIcon(med.status)}
               </span>
               <div className="flex-1">
-                <p className="font-semibold text-base">
-                  {med.medName}
-                </p>
+                <p className="font-semibold text-base">{med.medName}</p>
                 <p className="text-sm mt-1">
                   <span className="font-medium">Dosage:</span> {med.dosage}
                 </p>

@@ -1,4 +1,4 @@
-import fork from "../../assets/DashboardAssets/cutlery.png"
+import fork from "../../assets/DashboardAssets/cutlery.png";
 
 const DietCard = ({ diet }) => {
   const meals = diet?.meals || [];
@@ -12,12 +12,16 @@ const DietCard = ({ diet }) => {
         </div>
         <h2 className="text-xl font-bold text-text-light dark:text-text-dark">{day}'s Diet</h2>
       </div>
+
       <div className="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
         {meals.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400 text-center py-4">No meals scheduled for today.</p>
         ) : (
           meals.map((meal, idx) => (
-            <div key={idx} className="flex flex-col border-b border-gray-100 dark:border-gray-700 last:border-0 pb-3 last:pb-0">
+            <div
+              key={idx}
+              className="flex flex-col border-b border-gray-100 dark:border-gray-700 last:border-0 pb-3 last:pb-0"
+            >
               <div className="flex justify-between items-start">
                 <span className="px-2 py-1 rounded-md bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-bold uppercase tracking-wider">
                   {meal.mealType}
@@ -33,7 +37,8 @@ const DietCard = ({ diet }) => {
               </p>
               {meal.ingredients && meal.ingredients.length > 0 && (
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {meal.ingredients.slice(0, 3).join(", ")}{meal.ingredients.length > 3 ? "..." : ""}
+                  {meal.ingredients.slice(0, 3).join(", ")}
+                  {meal.ingredients.length > 3 ? "..." : ""}
                 </p>
               )}
             </div>

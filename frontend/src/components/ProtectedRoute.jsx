@@ -5,7 +5,7 @@ import AuthContext from "../contexts/AuthContext";
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <p>Loading...</p>; // optional spinner
+  if (loading) return <p>Loading...</p>; 
 
   if (!user) return <Navigate to="/login" />;
 

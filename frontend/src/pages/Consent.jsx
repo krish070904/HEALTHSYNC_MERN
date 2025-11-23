@@ -33,9 +33,7 @@ export default function ConsentDocument() {
           Consent Document
         </h1>
 
-        {/* Scrollable Content */}
         <div className="space-y-8 text-gray-800 leading-relaxed max-h-[65vh] overflow-y-auto pr-4 custom-scrollbar">
-          {/* INTRO */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">1. INTRODUCTION</h2>
             <p>
@@ -43,7 +41,6 @@ export default function ConsentDocument() {
               understand how this platform works, what powers the AI, and what
               you should — and should NOT — rely on it for.
             </p>
-
             <p className="mt-2">
               This app is built as a health-support companion for Indian users.
               It focuses on:
@@ -56,23 +53,18 @@ export default function ConsentDocument() {
               <li>Disease-severity early warnings</li>
               <li>Dermatology & visual symptom tracking</li>
               <li>Personal routine scheduling</li>
-              <li>
-                Continuous feedback loop to adapt to your health condition
-              </li>
+              <li>Continuous feedback loop to adapt to your health condition</li>
             </ul>
-
             <p className="mt-2">
               It combines multiple ML pipelines trained on authentic medical
               datasets — but it is NOT a doctor.
             </p>
           </section>
 
-          {/* MODEL */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               2. THE AI MODEL: BIOMISTRAL-7B
             </h2>
-
             <p>Our backbone model is BioMistral-7B, designed for:</p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Symptom reasoning</li>
@@ -82,23 +74,15 @@ export default function ConsentDocument() {
               <li>Research interpretation</li>
               <li>Medical text summarization</li>
             </ul>
-
-            <h3 className="text-xl font-semibold mt-4">
-              2.1 Why It's a Good Fit
-            </h3>
+            <h3 className="text-xl font-semibold mt-4">2.1 Why It's a Good Fit</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Tuned specifically for biomedical content</li>
               <li>Efficient yet powerful</li>
               <li>Strong at symptom → cause reasoning</li>
               <li>Performs well on structured health data</li>
             </ul>
-
-            <h3 className="text-xl font-semibold mt-4">
-              2.2 Authentic Data Sources
-            </h3>
-            <p className="mt-1">
-              Trained on curated biomedical corpora such as:
-            </p>
+            <h3 className="text-xl font-semibold mt-4">2.2 Authentic Data Sources</h3>
+            <p className="mt-1">Trained on curated biomedical corpora such as:</p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Peer-reviewed research</li>
               <li>Biomedical textbooks</li>
@@ -108,12 +92,10 @@ export default function ConsentDocument() {
             </ul>
           </section>
 
-          {/* DATASETS */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               3. EXTRA DATASETS USED TO IMPROVE ACCURACY
             </h2>
-
             <h3 className="text-xl font-semibold">3.1 Conversations</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>ChatDoctor</li>
@@ -121,14 +103,10 @@ export default function ConsentDocument() {
               <li>PubMedQA</li>
               <li>MedMCQA (India-specific)</li>
             </ul>
-
-            <h3 className="text-xl font-semibold mt-4">
-              3.2 Symptom & Disease Mapping
-            </h3>
+            <h3 className="text-xl font-semibold mt-4">3.2 Symptom & Disease Mapping</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Stanford Symptom → Disease</li>
             </ul>
-
             <h3 className="text-xl font-semibold mt-4">3.3 Dermatology</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>DermNet</li>
@@ -136,17 +114,13 @@ export default function ConsentDocument() {
               <li>DermMNIST</li>
               <li>ISIC Archive</li>
             </ul>
-
-            <h3 className="text-xl font-semibold mt-4">
-              3.4 India-Based Datasets
-            </h3>
+            <h3 className="text-xl font-semibold mt-4">3.4 India-Based Datasets</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>NHM Public Health Data</li>
               <li>Indian Food Composition Tables</li>
             </ul>
           </section>
 
-          {/* PERFORMANCE */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               4. MODEL PERFORMANCE & ACCURACY
@@ -159,7 +133,6 @@ export default function ConsentDocument() {
             </ul>
           </section>
 
-          {/* INDIA */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               5. "MADE FOR INDIA" PHILOSOPHY
@@ -170,7 +143,6 @@ export default function ConsentDocument() {
             </p>
           </section>
 
-          {/* TRUST */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               6. WHY YOU CAN TRUST THIS APP
@@ -184,87 +156,44 @@ export default function ConsentDocument() {
             </ul>
           </section>
 
-          {/* FEATURES */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">
               7. WHAT THE APP DOES (DETAILED)
             </h2>
-
             <h3 className="text-xl font-semibold">7.1 Symptom Tracking</h3>
-            <p className="mt-1">
-              Logs symptoms, patterns, moods, and pain levels.
-            </p>
-
-            <h3 className="text-xl font-semibold mt-4">
-              7.2 Indian-Centric Diet Recommendations
-            </h3>
-            <p className="mt-1">
-              Based on FSSAI guidelines, macros, and regional diets.
-            </p>
-
-            <h3 className="text-xl font-semibold mt-4">
-              7.3 Early-Warning Alerts
-            </h3>
+            <p className="mt-1">Logs symptoms, patterns, moods, and pain levels.</p>
+            <h3 className="text-xl font-semibold mt-4">7.2 Indian-Centric Diet Recommendations</h3>
+            <p className="mt-1">Based on FSSAI guidelines, macros, and regional diets.</p>
+            <h3 className="text-xl font-semibold mt-4">7.3 Early-Warning Alerts</h3>
             <p className="mt-1">Detects potential health risks early.</p>
-
-            <h3 className="text-xl font-semibold mt-4">
-              7.4 Daily Health Monitoring
-            </h3>
-            <p className="mt-1">
-              Tracks vitals, sleep, water intake, and wellness.
-            </p>
-
-            <h3 className="text-xl font-semibold mt-4">
-              7.5 Medical Routine Scheduling
-            </h3>
-            <p className="mt-1">
-              Medication reminders and health routine management.
-            </p>
+            <h3 className="text-xl font-semibold mt-4">7.4 Daily Health Monitoring</h3>
+            <p className="mt-1">Tracks vitals, sleep, water intake, and wellness.</p>
+            <h3 className="text-xl font-semibold mt-4">7.5 Medical Routine Scheduling</h3>
+            <p className="mt-1">Medication reminders and health routine management.</p>
           </section>
 
-          {/* LIMITATIONS WARNING CARD */}
           <section className="border-l-8 border-red-600 bg-red-50 p-6 rounded-xl shadow-md">
             <div className="flex items-center gap-3 mb-4">
-              <svg
-                className="w-8 h-8 text-red-600"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z"
-                />
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z"/>
               </svg>
               <h2 className="text-2xl font-bold text-red-700">
                 8. EXTREMELY IMPORTANT: LIMITATIONS & MEDICAL WARNING
               </h2>
             </div>
-
             <div className="space-y-5">
               <div>
-                <h3 className="text-xl font-semibold text-red-700">
-                  8.1 Not a Doctor
-                </h3>
+                <h3 className="text-xl font-semibold text-red-700">8.1 Not a Doctor</h3>
                 <p className="text-red-700 bg-red-100 font-semibold p-3 rounded-lg">
-                  This app is NOT a replacement for professional medical advice,
-                  diagnosis, or treatment.
+                  This app is NOT a replacement for professional medical advice, diagnosis, or treatment.
                 </p>
               </div>
-
               <div>
-                <h3 className="text-xl font-semibold text-red-700">
-                  8.2 For Support Only
-                </h3>
+                <h3 className="text-xl font-semibold text-red-700">8.2 For Support Only</h3>
                 <p>Use this app as a tracking + support tool only.</p>
               </div>
-
               <div>
-                <h3 className="text-xl font-semibold text-red-700">
-                  8.3 When to Go to a Doctor Immediately
-                </h3>
+                <h3 className="text-xl font-semibold text-red-700">8.3 When to Go to a Doctor Immediately</h3>
                 <ul className="list-disc pl-6 bg-red-100 text-red-700 font-semibold p-4 rounded-lg">
                   <li>Chest pain</li>
                   <li>Breathing difficulty</li>
@@ -274,23 +203,17 @@ export default function ConsentDocument() {
                   <li>Stroke symptoms</li>
                 </ul>
               </div>
-
               <div>
-                <h3 className="text-xl font-semibold text-red-700">
-                  8.4 Legal Disclaimer
-                </h3>
+                <h3 className="text-xl font-semibold text-red-700">8.4 Legal Disclaimer</h3>
                 <p className="text-sm bg-gray-100 p-3 rounded">
-                  By using this app, you agree it's for informational purposes
-                  only and not a substitute for professional medical care.
+                  By using this app, you agree it's for informational purposes only and not a substitute for professional medical care.
                 </p>
               </div>
             </div>
           </section>
 
-          {/* PRIVACY */}
           <section>
             <h2 className="text-2xl font-semibold mb-3">9. DATA PRIVACY</h2>
-
             <h3 className="text-xl font-semibold">9.1 We Collect</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Symptoms</li>
@@ -298,7 +221,6 @@ export default function ConsentDocument() {
               <li>Lifestyle info</li>
               <li>Uploaded medical images</li>
             </ul>
-
             <h3 className="text-xl font-semibold mt-4">9.2 We Never Collect</h3>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>Aadhar</li>
@@ -309,30 +231,19 @@ export default function ConsentDocument() {
             </ul>
           </section>
 
-          {/* USER RESPONSIBILITIES */}
           <section>
-            <h2 className="text-2xl font-semibold mb-3">
-              10. USER RESPONSIBILITIES
-            </h2>
-            <p>
-              You agree to use this app responsibly and consult healthcare
-              professionals for medical decisions.
-            </p>
+            <h2 className="text-2xl font-semibold mb-3">10. USER RESPONSIBILITIES</h2>
+            <p>You agree to use this app responsibly and consult healthcare professionals for medical decisions.</p>
           </section>
 
-          {/* CONSENT */}
           <section>
-            <h2 className="text-2xl font-semibold mb-3">
-              11. CONSENT STATEMENT
-            </h2>
+            <h2 className="text-2xl font-semibold mb-3">11. CONSENT STATEMENT</h2>
             <p className="font-semibold">
-              By checking the box below, you confirm you’ve read, understood,
-              and agree to all terms and disclaimers.
+              By checking the box below, you confirm you’ve read, understood, and agree to all terms and disclaimers.
             </p>
           </section>
         </div>
 
-        {/* Checkbox */}
         <div className="mt-8 border-t pt-6">
           <label className="flex items-start gap-3 cursor-pointer">
             <input
@@ -342,13 +253,11 @@ export default function ConsentDocument() {
               className="h-5 w-5 rounded border-gray-400"
             />
             <span className="text-sm text-gray-700 leading-relaxed">
-              I agree to the terms, privacy policy, and medical disclaimers. I
-              understand this app does not replace professional medical advice.
+              I agree to the terms, privacy policy, and medical disclaimers. I understand this app does not replace professional medical advice.
             </span>
           </label>
         </div>
 
-        {/* Continue Button */}
         <div className="mt-8 text-center">
           <button
             onClick={handleContinue}

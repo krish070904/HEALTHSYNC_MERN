@@ -11,7 +11,6 @@ export default function ChatPage() {
   const [sessionId] = useState(Date.now().toString());
   const bottomRef = useRef(null);
 
-  // Fetch chat history on mount
   useEffect(() => {
     async function fetchHistory() {
       const res = await getChatHistory(sessionId);
@@ -20,7 +19,6 @@ export default function ChatPage() {
     fetchHistory();
   }, [sessionId]);
 
-  // Auto‑scroll to newest message
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -39,7 +37,6 @@ export default function ChatPage() {
 
   return (
     <div className="relative flex flex-col h-screen max-w-4xl mx-auto bg-white dark:bg-background-dark shadow-lg">
-      {/* Floating saffron bubbles background */}
       <div className="bubbles">
         {[...Array(12)].map((_, i) => (
           <div

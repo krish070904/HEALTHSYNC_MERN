@@ -1,8 +1,6 @@
-/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
-/* Body & font */
 .meal-page {
   font-family: 'Manrope', sans-serif;
   background-color: #f8f7f5;
@@ -11,34 +9,31 @@
 
 .meal-page.dark {
   background-color: #221b10;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* Backdrop / glass effect */
 .backdrop-blur-sm {
   backdrop-filter: blur(6px);
 }
 
-/* Cards */
 .meal-card {
   background-color: white;
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
   position: relative;
 }
 
 .meal-card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .meal-card.dark {
   background-color: #221b10;
-  box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
 }
 
-/* Badges */
 .badge {
   font-size: 0.65rem;
   font-weight: 500;
@@ -71,7 +66,6 @@
   color: #5b21b6;
 }
 
-/* Floating Action Button */
 .fab {
   position: fixed;
   bottom: 1.5rem;
@@ -84,7 +78,7 @@
   justify-content: center;
   background-color: #f29e0d;
   color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s;
 }
 
@@ -92,7 +86,6 @@
   transform: scale(1.05);
 }
 
-/* Search bar input */
 .search-input {
   flex: 1;
   border: none;
@@ -106,7 +99,6 @@
   color: #9ca3af;
 }
 
-/* Filters */
 .filter-btn {
   display: flex;
   align-items: center;
@@ -121,8 +113,8 @@
 }
 
 .filter-btn.active {
-  background-color: #f29e0d33; /* primary/20 */
-  color: #f29e0d; /* primary */
+  background-color: #f29e0d33;
+  color: #f29e0d;
 }
 
 .meal-type-radio {
@@ -146,11 +138,10 @@
   color: #f29e0d;
 }
 
-/* Modal */
 .recipe-modal {
   position: fixed;
   inset: 0;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

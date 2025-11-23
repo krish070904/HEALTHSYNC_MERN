@@ -1,4 +1,3 @@
-/* Floating saffron bubbles background */
 .bubbles {
   position: absolute;
   inset: 0;
@@ -27,7 +26,7 @@
   to {transform: rotate(360deg) translateX(0) translateY(0);}
 }
 
-/* Individual bubble particles */
+
 .bubble {
   position: absolute;
   bottom: -150px;

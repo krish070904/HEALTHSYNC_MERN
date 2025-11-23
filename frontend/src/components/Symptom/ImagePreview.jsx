@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/SymptomEntryPage.css"; // ✅ only import the CSS here
+import "../../styles/SymptomEntryPage.css"; 
 
 const ImagePreview = ({ image }) => (
   <div className="relative w-full aspect-video bg-background-light rounded-lg flex items-center justify-center overflow-hidden">

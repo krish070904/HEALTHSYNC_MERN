@@ -5,26 +5,26 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Consent from "./pages/Consent";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import SymptomEntryPage from "./pages/SymptomEntryPage";
 import DailyMonitoringPage from "./pages/DailyMonitoringPage";
-import DietRecipesPage from "./pages/DietRecipesPage"; 
+import DietRecipesPage from "./pages/DietRecipesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ChatPage from "./pages/ChatPage";
 import MedicationScheduler from "./pages/MedicationScheduler";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout";
 import SplashScreen from "./components/SplashScreen";
 
 function App() {
   const [loading, setLoading] = useState(true);
 
-  if (loading) {
-    return <SplashScreen onFinish={() => setLoading(false)} />;
-  }
+  if (loading) return <SplashScreen onFinish={() => setLoading(false)} />;
 
   return (
     <Router>
@@ -34,7 +34,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/consent" element={<Consent />} />
 
-        {/* Protected Routes with Layout */}
         <Route
           element={
             <ProtectedRoute>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../../services/api";
-import reoprt from "../../assets/DashboardAssets/report-card.png"
+import reportIcon from "../../assets/DashboardAssets/report-card.png";
+
 const ReportsCard = () => {
   const [loading, setLoading] = useState(false);
 
@@ -15,8 +16,8 @@ const ReportsCard = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       alert("Failed to download report.");
     } finally {
       setLoading(false);
@@ -27,7 +28,7 @@ const ReportsCard = () => {
     <div className="w-full lg:col-span-1 xl:col-span-1 bg-surface-light dark:bg-surface-dark rounded-DEFAULT shadow-soft overflow-hidden">
       <div className="p-6 border-b border-border-light flex items-center space-x-3">
         <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-          <img src={reoprt} alt="Pill" className="w-5 h-5" />
+          <img src={reportIcon} alt="Report Icon" className="w-5 h-5" />
         </div>
         <h2 className="text-xl font-bold text-text-light dark:text-text-dark">Reports</h2>
       </div>
