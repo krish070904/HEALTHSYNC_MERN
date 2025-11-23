@@ -27,13 +27,12 @@ app.use(express.json());
 connectDB();
 app.use("/uploads", express.static("uploads"));
 
-// CORS Configuration
 app.use(cors({
-  origin: ["http://localhost:5173", "https://healthsync-mern.vercel.app"],
+  origin: ["http://localhost:5173", "https://healthsync-care.vercel.app"],
   credentials: true
 }));
 
-// Root Route
+
 app.get("/", (req, res) => {
   res.send("HealthSync Backend is Running!");
 });
