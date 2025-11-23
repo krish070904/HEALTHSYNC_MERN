@@ -23,6 +23,7 @@ dotenv.config();
 
 const app = express();
 
+app.set('trust proxy', 1); // Trust first proxy (Render)
 app.use(express.json());
 connectDB();
 app.use("/uploads", express.static("uploads"));

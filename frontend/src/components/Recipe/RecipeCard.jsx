@@ -22,7 +22,7 @@ const RecipeCard = ({ recipe, onClick }) => {
           </div>
         )}
         <img
-          src={imgError ? "https://via.placeholder.com/300x200?text=Recipe+Image" : (recipe.image || "https://via.placeholder.com/300x200")}
+          src={imgError ? "https://placehold.co/300x200?text=Recipe+Image" : (recipe.image || "https://placehold.co/300x200")}
           alt={recipe.recipe}
           onLoad={() => setImgLoading(false)}
           onError={() => {

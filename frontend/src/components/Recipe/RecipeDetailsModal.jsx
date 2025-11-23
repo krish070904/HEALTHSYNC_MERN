@@ -34,7 +34,7 @@ const RecipeDetailsModal = ({ recipe, onClose }) => {
         </button>
 
         <img
-          src={recipe.image || "https://via.placeholder.com/600x400"}
+          src={recipe.image || "https://placehold.co/600x400"}
           alt={recipe.recipe}
           className="w-full h-60 object-cover rounded mb-4"
         />

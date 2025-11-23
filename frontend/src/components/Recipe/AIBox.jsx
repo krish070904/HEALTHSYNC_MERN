@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 
 const AIBox = ({ onClose, setRecipes }) => {
   const [query, setQuery] = useState("");
@@ -9,12 +9,7 @@ const AIBox = ({ onClose, setRecipes }) => {
     if (!query.trim()) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:5000/ai/generate",
-        { query },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.post("/ai/generate", { query });
       setRecipes(response.data);
       onClose();
     } catch (error) {
