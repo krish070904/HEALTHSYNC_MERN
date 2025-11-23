@@ -2,7 +2,7 @@
 
 <img src="./frontend/src/assets/Logo/sdfdbl.png" alt="HealthSync Logo" width="400"/>
 
-## AI-Powered Health Management System
+## AI-Powered Health Management System 
 </div>
 
 ---
